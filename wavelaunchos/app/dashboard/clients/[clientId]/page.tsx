@@ -40,9 +40,9 @@ const TIMELINE_ICON: Record<string, ReactNode> = {
 export default async function ClientDetailPage({
   params,
 }: {
-  params: Promise<{ clientId: string }>;
+  params: { clientId: string };
 }) {
-  const { clientId } = await params;
+  const { clientId } = params;
   const client = await getClientDetail(clientId);
 
   if (!client) {
