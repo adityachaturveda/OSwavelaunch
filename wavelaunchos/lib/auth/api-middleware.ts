@@ -33,7 +33,7 @@ export async function getAuthSession(): Promise<AuthSession | null> {
  * Middleware to require authentication for API routes
  * Returns 401 if user is not authenticated
  */
-export async function requireAuth(
+export function requireAuth(
   handler: (req: NextRequest, session: AuthSession, context?: any) => Promise<NextResponse>
 ) {
   return async (req: NextRequest, context?: any) => {
@@ -54,7 +54,7 @@ export async function requireAuth(
  * Middleware to require admin role for API routes
  * Returns 401 if not authenticated, 403 if not admin
  */
-export async function requireAdmin(
+export function requireAdmin(
   handler: (req: NextRequest, session: AuthSession, context?: any) => Promise<NextResponse>
 ) {
   return async (req: NextRequest, context?: any) => {
