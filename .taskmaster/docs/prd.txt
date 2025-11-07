@@ -1,0 +1,950 @@
+# WavelaunchOS CRM - Product Requirements Document
+
+**Version:** 2.0  
+**Date:** November 5, 2025  
+**Product Owner:** Arunav Gupta, Wavelaunch VC  
+**Status:** Ready for Development
+
+---
+
+# Overview
+
+## What It Solves
+
+WavelaunchOS is a local-first CRM and brand-building operating system designed for Wavelaunch Studio, a venture that partners with creators and influencers to launch their own brands. It consolidates client onboarding, AI-powered document generation, communication tracking, and project management into a single, beautifully designed local application.
+
+**Current Problem:** Wavelaunch Studio manages creator partnerships through fragmented manual processes across multiple disconnected tools. Manual creation of business plans and monthly deliverables takes days per document, creating operational inefficiencies and inconsistent client experiences.
+
+**Solution:** WavelaunchOS automates document generation using Claude API (reducing manual effort by ≥70%), centralizes all operations in an offline-capable local application, and delivers consulting-grade outputs with professional PDF branding.
+
+## Who It's For
+
+- **Primary User:** Arunav Gupta and Wavelaunch Studio operations team (managing up to 100 concurrent creator clients)
+- **Future Users:** Creator/influencer clients (Phase 2+) with limited portal access
+
+## Why It's Valuable
+
+- **Speed:** Transform hours of manual work into automated workflows
+- **Quality:** Maintain McKinsey-level professionalism through AI and branded templates
+- **Organization:** Replace scattered tools with unified platform
+- **Intelligence:** AI-powered suggestions maintain workflow momentum
+- **Reliability:** Offline-first with clear cloud migration path
+
+---
+
+# Core Features
+
+## 1. Client Management & Onboarding
+
+**What it does:** Comprehensive system for managing creator/influencer relationships. Includes dynamic onboarding form, searchable client directory, detailed profiles with activity timelines, and rich note-taking.
+
+**Why it's important:** Client data is the foundation. Without proper management, AI documents lack context, files become disorganized, and communications get lost.
+
+**How it works:**
+- Admin fills onboarding form (creator name, brand, contact, social media, audience, niche, goals)
+- System creates client record with auto-generated summary
+- Client directory provides search/filter/sort (max 100 clients)
+- Client detail page serves as hub with tabs: Overview, Business Plan, Deliverables (M1-M8), Files, Chat, Notes
+- Activity log auto-tracks all interactions
+- Rich text notes capture important context
+
+## 2. AI-Powered Business Plan Generation
+
+**What it does:** One-click generation of comprehensive business plans using Claude API. Generated as editable HTML/Markdown, then exported to branded PDFs (300 DPI, consulting-grade).
+
+**Why it's important:** This is the core value proposition. Manual creation takes days; AI reduces to minutes while maintaining quality (≥80% usable first-draft).
+
+**How it works:**
+- Admin clicks "Generate Business Plan" on client page
+- System loads client data into customizable YAML prompt template
+- Claude API generates plan asynchronously (job queue)
+- Content appears in editor (HTML/Markdown toggle)
+- Admin refines with rich text or markdown editor (auto-save every 30s)
+- Export to PDF with Wavelaunch branding (logo, cover page, TOC, headers/footers)
+- Version tracking stores multiple iterations
+
+## 3. Monthly Deliverables System (M1-M8)
+
+**What it does:** Manages 8-month creator engagement with month-specific deliverable generation (M1: Discovery & Strategy, M2: Brand Foundation, etc.). Context-aware prompts reference previous months. Includes approval workflows (Draft → Pending → Approved → Delivered).
+
+**Why it's important:** Creator partnerships are ongoing. Monthly deliverables maintain momentum and demonstrate progress throughout the relationship.
+
+**How it works:**
+- Deliverables tab displays M1-M8 visual timeline
+- "Generate Next Deliverable" intelligently creates next sequential month
+- Month-specific prompts include previous deliverable context (M5 knows about M1-M4)
+- Same editing, versioning, PDF capabilities as business plans
+- Status tracking and email notifications
+- Progress gauge shows X/8 completed
+
+## 4. Files Library & Document Management
+
+**What it does:** Centralized storage with upload, preview, search, categorization. Auto-organizes system PDFs (business plans, deliverables) plus manual uploads. Supports PDF, DOCX, XLSX, images.
+
+**Why it's important:** Without central management, documents scatter across folders and platforms. Files Library ensures everything is accessible with proper organization.
+
+**How it works:**
+- Files stored locally in `/data/clients/{clientId}/files/`
+- Drag-and-drop upload (max 10MB per file, batch supported)
+- Auto-categorization: Business Plans, Deliverables, Miscellaneous
+- Search by filename, filter by client/type/date
+- Preview PDFs and images in-app
+- Soft delete with 30-day recovery
+- Storage monitoring (50GB total, warning at 80%)
+- Auto-cleanup of temp files >7 days old
+
+## 5. Chat Inbox & Email Integration
+
+**What it does:** Integrates with Instantly.ai to auto-ingest email campaign threads, generate AI summaries, and link conversations to clients. Searchable inbox with thread viewer.
+
+**Why it's important:** Email is primary communication channel. Integration brings context directly into CRM, preventing lost conversations.
+
+**How it works:**
+- Background job syncs from Instantly.ai every 15 minutes
+- AI summarizes each thread (topic, action items, sentiment)
+- Auto-links threads to clients by email addresses/content
+- Chat inbox displays threads with filters and search
+- Thread detail shows full conversation
+- Manual override to link/unlink
+- Graceful degradation: shows cached data when API unavailable
+
+## 6. Prompt Template Manager
+
+**What it does:** YAML-based system for managing Claude API prompts. Customize structures, variables, examples without code changes. Version tracking and template variations for document types.
+
+**Why it's important:** AI quality depends on prompt quality. YAML templates enable rapid iteration without developer involvement.
+
+**How it works:**
+- Templates stored as YAML in `/data/prompts/`
+- Web UI for viewing and editing templates
+- YAML editor with syntax highlighting
+- Variables use mustache syntax: `{{client_name}}`
+- Template validation (required fields, valid YAML)
+- Version history (git or database)
+- Active template selection per type (business plan, M1-M8)
+
+## 7. Analytics Dashboards
+
+**What it does:** Two types: (1) Admin Dashboard showing Instantly.ai campaign metrics (reply rate, opportunities $$$, conversions, warm leads) + system overview, (2) Client Dashboards showing brand KPIs (engagement, sales, growth) per creator.
+
+**Why it's important:** Data-driven decisions require visibility. Admin dashboard enables campaign optimization; client dashboards demonstrate creator brand performance.
+
+**How it works:**
+- Admin dashboard displays Instantly.ai metrics in card layout (shadcn reference style)
+- Metric cards show value, trend indicator, percentage change
+- Time filters: 7 days, 30 days, 3 months
+- Visual charts (Recharts) for trends
+- System overview: client count (X/100), pending deliverables, storage usage
+- Client dashboards: manually populated KPIs or future integrations
+- Auto-refresh every 5 minutes
+
+## 8. AI Next-Steps Engine
+
+**What it does:** Context-aware task suggestions based on client state. Suggests actions like "Generate M3," "Follow up on pending approval," "Schedule review call" at appropriate times.
+
+**Why it's important:** Managing 100 clients = hundreds of tasks. AI suggestions prevent follow-ups from falling through cracks, guide optimal workflows.
+
+**How it works:**
+- Rules engine analyzes client state (plan status, deliverable progress, last activity)
+- Generates suggestions with rationale and priority (high/medium/low)
+- Optional: Claude API generates personalized suggestions
+- Appears on client pages and main dashboard
+- Quick action buttons make suggestions immediately actionable
+- Dismiss/complete tracking prevents spam
+
+## 9. PDF Export System
+
+**What it does:** Generates consulting-grade PDFs using Puppeteer/Playwright. Includes Wavelaunch branding (logo, colors, fonts), cover pages, table of contents, headers/footers, proper layout.
+
+**Why it's important:** Creators expect high-end consulting firm quality. Professional PDFs reinforce Wavelaunch's premium positioning.
+
+**How it works:**
+- HTML to PDF via Playwright
+- Tailwind print CSS for formatting
+- Custom templates: cover structure, TOC, headers/footers
+- Wavelaunch branding: logo, #0F1724/#FF6B6B colors, Inter/Lora fonts
+- 300 DPI output (print-ready)
+- Template caching for performance
+- Auto-stored in client files with versioning
+
+## 10. Backup & Recovery System
+
+**What it does:** Automated daily database backups (2 AM) with 30-day retention. Manual backup trigger, restore functionality, verification, status monitoring.
+
+**Why it's important:** Local-first = single point of failure. Without backups, hardware failure destroys months of work. Automated backups ensure business continuity.
+
+**How it works:**
+- Scheduled job backs up database daily
+- Timestamped backups in `/data/backups/`
+- Integrity verification after each backup
+- Auto-cleanup of backups >30 days
+- Manual backup in Settings
+- Restore UI with backup file selection
+- Pre-restore safety backup
+- Status visible in dashboard and Settings
+
+---
+
+# User Experience
+
+## User Personas
+
+### Primary: Operations Admin (Arunav)
+
+**Role:** Managing Partner at Wavelaunch VC
+
+**Goals:**
+- Efficiently manage 100 concurrent creator relationships
+- Generate high-quality documents quickly
+- Track campaign performance and client growth
+- Maintain organized communications
+- Minimize manual document creation time
+
+**Pain Points:**
+- Fragmented tools make context maintenance difficult
+- Manual document creation is slow and inconsistent
+- Hard to track which clients need attention
+- Scattered emails and files
+- No centralized campaign performance view
+
+**Technical Comfort:** High - prefers efficient workflows, keyboard shortcuts
+
+**Usage Patterns:**
+- Daily: Dashboard check, review pending deliverables, respond to communications
+- Weekly: Onboard clients, generate business plans, update KPIs
+- Monthly: Generate deliverables, export reports, review analytics
+
+### Future: Creator Client (Phase 2+)
+
+**Role:** Influencer partnering with Wavelaunch to launch brand
+
+**Goals:** Understand strategy, review progress, access documents, track performance
+
+**Technical Comfort:** Medium - familiar with consumer apps
+
+---
+
+## Key User Flows
+
+### Flow 1: Onboarding New Client
+
+1. Admin clicks "New Client" from dashboard/directory
+2. Form appears: Basic Info, Brand Details, Social Media, Goals, Notes
+3. Admin fills required fields (name, brand, email, niche)
+4. Real-time validation (email format, duplicate check)
+5. Click "Create Client"
+6. System creates record, auto-generates summary
+7. Success message: "View Profile" or "Onboard Another"
+8. Client appears in directory immediately
+
+**Edge Cases:**
+- 100 client limit → Error with guidance
+- Duplicate email → Warning with proceed/cancel
+- Network error → Auto-save draft, retry option
+
+### Flow 2: Generate Business Plan
+
+1. Navigate to client detail page
+2. Click "Generate Business Plan" on Business Plan tab
+3. Modal shows prompt preview and client data mapping
+4. Click "Generate"
+5. Progress indicator with live updates
+6. Async generation via job queue
+7. Notification when complete
+8. Editor opens with generated content (HTML/Markdown toggle)
+9. Admin reviews and edits (auto-save every 30s)
+10. Click "Generate PDF"
+11. PDF progress indicator
+12. PDF stored, download link shown
+
+**Alternative:** Regenerate if unsatisfied (new version)
+
+**Edge Cases:**
+- API unavailable → Error with retry
+- Rate limit → Job queued with delay notice
+- Incomplete data → Warning before generation
+
+### Flow 3: Monthly Deliverable Workflow
+
+1. Navigate to client Deliverables tab
+2. Timeline shows M1-M3 complete (green), M4 draft (gray)
+3. Click "Generate Next Deliverable" (creates M5)
+4. System loads M5 prompt with M1-M4 context
+5. Generation begins
+6. Review and edit M5 content
+7. Click "Submit for Review" → Status: Pending Review
+8. Internal review
+9. Click "Approve" → Status: Approved
+10. Click "Generate PDF"
+11. Month-specific branded PDF created
+12. Click "Mark as Delivered"
+13. Status: Delivered, timestamp recorded
+14. Optional: Email notification to client
+
+**Alternative:** Rejection requires reason, admin edits and resubmits
+
+### Flow 4: Finding Files
+
+1. Admin needs Client X business plan PDF
+2. Opens Files Library
+3. Filters: Client = "Client X", Category = "Business Plans"
+4. Results show 3 versions
+5. Preview latest in modal
+6. Click "Download" or "Copy Link"
+
+**Bulk:** Select multiple, click "Delete Selected" → Soft delete confirmation
+
+### Flow 5: Campaign Performance Check
+
+1. Open app → Admin Dashboard
+2. Instantly.ai metrics displayed:
+   - Reply Rate: 23.5% (↑ 2.1%)
+   - Opportunities: $47,300 (↑ 12.4%)
+   - Conversions: 8 (↓ 1)
+   - Warm Leads: 156 (↑ 23)
+3. Click "Last 30 days" filter
+4. Charts update with 30-day trends
+5. Notice conversion dip
+6. Open Chat Inbox to review threads
+7. Filter "Last 7 days"
+8. Review summaries for patterns
+
+**Graceful Degradation:** API down → Cached data with timestamp + banner
+
+---
+
+## UI/UX Considerations
+
+**Design System:**
+- Reference: shadcn/ui v4 dashboard (https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard)
+- Aesthetic: Minimal-luxury, McKinsey-style clarity, executive-grade
+- Colors: #0F1724 (dark), #FF6B6B (accent)
+- Fonts: Inter (UI/body), Lora (headings/documents)
+- Components: shadcn/ui (Radix UI + Tailwind)
+
+**Layout Patterns:**
+- Dashboard-centric with persistent sidebar
+- Contextual slide-in panels for details
+- Progressive disclosure for complex features
+- Status indicators and progress bars everywhere
+- Inline editing with auto-save
+
+**Accessibility:** WCAG 2.1 Level AA
+- Keyboard navigation
+- Focus indicators
+- 4.5:1 contrast ratios
+- Semantic HTML
+- Screen reader support
+
+**Responsive Design:**
+- Desktop: 1920x1080 primary
+- Tablet: 768px
+- Mobile: 375px
+- Hamburger menu on mobile
+- Touch-friendly buttons (44x44px min)
+
+---
+
+# Technical Architecture
+
+## System Components
+
+### Frontend
+- **Framework:** Next.js 16 (App Router), TypeScript, React 18+
+- **Styling:** Tailwind CSS + shadcn/ui components
+- **State:** React Context (global), local state (component)
+- **Rich Text:** TipTap (HTML editor)
+- **Markdown:** CodeMirror with preview
+- **Charts:** Recharts
+- **Icons:** Lucide React
+- **Forms:** React Hook Form + Zod validation
+
+### Backend
+- **Runtime:** Node.js via Next.js API routes
+- **Auth:** NextAuth.js for sessions
+- **Validation:** Zod schemas on all endpoints
+- **Services:**
+  - Database Service (`/lib/db`) - Prisma client + queries
+  - AI Service (`/lib/ai`) - Claude API wrapper + prompts
+  - PDF Service (`/lib/pdf`) - Playwright PDF generation
+  - File Service (`/lib/files`) - Upload/storage operations
+  - Email Service (`/lib/email`) - Resend/Nodemailer
+  - Backup Service (`/lib/backup`) - Database backup/restore
+  - Instantly Service (`/lib/instantly`) - API client + sync
+
+### Data Layer
+- **Database:** SQLite + Prisma ORM at `/data/wavelaunch.db`
+- **File Storage:** Local filesystem `/data/clients/{id}/files/`
+- **Config:** Environment variables (secrets) + YAML (prompts)
+- **Backups:** `/data/backups/` with 30-day retention
+
+### Job Queue
+- **Implementation:** File-based persistent queue (or BullMQ)
+- **Job Types:** generate-business-plan, generate-deliverable, generate-pdf, summarize-thread, backup-db, sync-instantly
+- **Features:** Persistence, retry (exponential backoff, max 3), status tracking, concurrency limits, prioritization
+
+### External Integrations
+- **Claude API:** Generate documents/summaries (claude-sonnet-4-20250514)
+- **Instantly.ai:** Campaign metrics + email threads (sync every 15 min)
+- **Email Provider:** Resend or Nodemailer for notifications
+
+## Data Models (Simplified)
+
+**Core Entities:**
+- **User:** id, email, passwordHash, name, role (ADMIN/CLIENT)
+- **Client:** id, creatorName, brandName, email, status (ACTIVE/INACTIVE), niche, goals, socialHandles (JSON), onboardedAt
+- **BusinessPlan:** id, clientId, version, status (DRAFT/PENDING_REVIEW/APPROVED/DELIVERED), contentHtml, contentMarkdown, pdfPath, generatedBy, approvedAt
+- **Deliverable:** id, clientId, month (1-8), title, status, contentHtml/Markdown, pdfPath, rejectionReason
+- **File:** id, clientId, filename, filepath, filesize, mimetype, category (BUSINESS_PLAN/DELIVERABLE/UPLOAD), uploadedBy, deletedAt (soft delete)
+- **ChatThread:** id, clientId, externalId (Instantly.ai ID), subject, summary, sentiment, lastMessageAt
+- **ChatMessage:** id, threadId, sender, recipient, body, sentAt
+- **PromptTemplate:** id, name, type (BUSINESS_PLAN/DELIVERABLE_M1-M8), yamlPath, isActive
+- **Job:** id, type, status (QUEUED/PROCESSING/COMPLETED/FAILED), payload (JSON), attempts, result, error
+- **Note:** id, clientId, content, isImportant, authorId
+- **Activity:** id, clientId, type (CLIENT_CREATED/PLAN_GENERATED/etc), description, metadata (JSON)
+- **ClientKPI:** id, clientId, date, engagementRate, salesRevenue, followerGrowth, conversionRate
+- **BackupLog:** id, filename, filepath, filesize, status (SUCCESS/FAILED), verified
+
+**Relationships:**
+- Client → One-to-Many → BusinessPlans, Deliverables, Files, ChatThreads, Notes, Activities, ClientKPIs
+- User → One-to-Many → BusinessPlans (generatedBy), Files (uploadedBy), Notes (author)
+- ChatThread → One-to-Many → ChatMessages
+
+## APIs
+
+**Internal Routes:**
+- Auth: `/api/auth/login`, `/api/auth/logout`, `/api/auth/session`
+- Clients: `/api/clients` (GET/POST), `/api/clients/:id` (GET/PATCH/DELETE), `/api/clients/:id/activity`
+- Business Plans: `/api/clients/:clientId/business-plans` (GET), `/api/clients/:clientId/business-plans/generate` (POST), `/api/business-plans/:id` (GET/PATCH), `/api/business-plans/:id/pdf` (POST), `/api/business-plans/:id/status` (PATCH)
+- Deliverables: `/api/clients/:clientId/deliverables`, `/api/deliverables/:id`, `/api/deliverables/:id/pdf`, `/api/deliverables/:id/status`
+- Files: `/api/files` (GET/POST upload), `/api/files/:id` (GET metadata/download, PATCH, DELETE)
+- Chat: `/api/chat/threads`, `/api/chat/threads/:id`, `/api/chat/threads/:id/link`, `/api/chat/sync`
+- Analytics: `/api/analytics/admin`, `/api/analytics/clients/:id`
+- Prompts: `/api/prompts` (GET), `/api/prompts/:id` (GET/PATCH)
+- Jobs: `/api/jobs` (GET), `/api/jobs/:id` (GET/cancel/retry)
+- System: `/api/health`, `/api/system/storage`, `/api/backup/create`, `/api/backup/list`, `/api/backup/restore`
+- Settings: `/api/settings` (GET/PATCH), `/api/settings/test-integration`
+
+**External APIs:**
+- **Claude:** `POST https://api.anthropic.com/v1/messages` (content generation)
+- **Instantly.ai:** Campaigns, metrics, threads, messages (endpoints TBD per docs)
+- **Resend/SMTP:** Email sending
+
+## Infrastructure
+
+**Development:**
+- Hardware: 16GB+ RAM, 100GB+ disk
+- Software: Node.js 20+, pnpm 8+, Docker/Compose, Git
+- Setup: <10 minutes
+
+**Production (Local):**
+- Hardware: Mac Mini or similar, 32GB RAM, 256GB+ SSD, UPS, gigabit internet
+- Software: Node.js 20+, PM2/systemd, backup to NAS/external drive
+- Deployment: `pnpm build && pnpm start` or Docker Compose
+- Access: `http://localhost:3000` or `http://{local-ip}:3000`
+
+**Future (Cloud):**
+- Platform: Vercel, Railway, Fly.io
+- Database: PostgreSQL (Supabase, Neon, RDS)
+- Storage: S3, Cloudflare R2
+- Auth: OAuth (Google, Microsoft)
+
+**Security:**
+- Database file permissions (owner-only)
+- API keys in env vars
+- Password hashing (bcrypt, 12 rounds)
+- HTTP-only session cookies
+- Input validation (Zod)
+- HTTPS (even local - self-signed cert)
+
+---
+
+# Development Roadmap
+
+## Phase 1: MVP Foundation (Weeks 1-8)
+
+**Goal:** Launch fully functional local CRM enabling client onboarding, AI-powered business plan/deliverable generation, file management, and campaign tracking.
+
+### Weeks 1-2: Core Infrastructure
+
+**Deliverables:**
+- Next.js 16 + TypeScript + Tailwind + shadcn/ui initialized
+- Docker Compose setup
+- Prisma + SQLite with full schema
+- Authentication system (NextAuth)
+- Base dashboard layout with navigation
+- Health check endpoint
+
+**Outcome:** Developer can clone and run in <10 minutes. Admin can log in to empty dashboard with Wavelaunch branding.
+
+### Weeks 3-4: Client Management
+
+**Deliverables:**
+- Client onboarding form with validation
+- Client directory (search, filter, sort)
+- Client detail page with tabs
+- Notes system (rich text editor)
+- Activity log tracking
+- Capacity validation (max 100)
+
+**Outcome:** Fully functional client management. Can onboard and organize 100 clients.
+
+### Weeks 5-6: AI Business Plans
+
+**Deliverables:**
+- Claude API integration with retry logic
+- Prompt template manager (YAML)
+- Business plan generation workflow
+- HTML/Markdown editor with auto-save
+- PDF generation with Wavelaunch branding
+- Versioning and status tracking
+- Job queue for async generation
+
+**Outcome:** Complete business plan feature. End-to-end AI generation, editing, PDF export.
+
+### Weeks 7-8: Deliverables & Polish
+
+**Deliverables:**
+- Monthly deliverables system (M1-M8)
+- Context-aware generation (includes previous months)
+- Editor, approval workflow, PDF export
+- Files library (upload, preview, search)
+- Storage monitoring (50GB, alert at 80%)
+- Database backup system (daily, 30-day retention)
+- Settings page (API keys, integrations)
+
+**Outcome:** Complete MVP. All core features functional. QA completed. Documentation ready.
+
+---
+
+## Phase 2: Chat Integration & Analytics (Weeks 9-12)
+
+**Goal:** Add Instantly.ai integration and analytics dashboards for operational intelligence.
+
+### Weeks 9-10: Instantly.ai Integration
+
+**Deliverables:**
+- Instantly.ai API client with graceful degradation
+- Campaign metrics sync (15 min intervals)
+- Email thread ingestion and storage
+- Chat inbox UI with thread viewer
+- Auto-summarization (Claude API)
+- Auto-linking threads to clients
+
+**Outcome:** Campaign tracking and communication context integrated into CRM.
+
+### Weeks 11-12: Analytics Dashboards
+
+**Deliverables:**
+- Admin dashboard with Instantly.ai metrics (cards, charts)
+- System overview (client count, pending items, storage)
+- Client dashboard with brand KPIs
+- KPI data entry and visualization
+- AI Next-Steps Engine (suggestions)
+- Analytics export (CSV/PDF)
+
+**Outcome:** Full operational intelligence. Data-driven decision making enabled.
+
+---
+
+## Phase 3: Future Enhancements (Post-MVP)
+
+**Goal:** Expand based on user feedback and operational needs.
+
+### Enhancement Set 1: Client Portal (Weeks 13-16)
+- Client-facing login
+- Read-only access to documents
+- Brand KPI dashboard
+- Simple feedback mechanism
+
+**Value:** Client self-service, reduced communication overhead, demonstrate progress
+
+### Enhancement Set 2: Collaboration (Weeks 17-20)
+- In-line comments on documents
+- @mentions
+- Version comparison (diff view)
+- Change tracking
+
+**Value:** Internal review process, team collaboration, improved quality
+
+### Enhancement Set 3: Advanced Analytics (Weeks 21-24)
+- Predictive analytics (churn risk, forecasts)
+- Cohort analysis
+- Custom report builder
+- BI tool integration
+- API webhooks
+
+**Value:** Proactive client management, data-driven decisions
+
+### Enhancement Set 4: Automation (Weeks 25-28)
+- Scheduled deliverable generation
+- Email reminders
+- Status change triggers
+- Custom workflow rules
+- Zapier/Make integration
+
+**Value:** Scales operations without overhead
+
+### Enhancement Set 5: Cloud Migration (Weeks 29-36)
+- Deploy to cloud (Vercel, Railway, Fly.io)
+- SQLite → PostgreSQL migration
+- Local FS → S3 migration
+- OAuth authentication
+- Team member access with RBAC
+- Mobile app (React Native/PWA)
+
+**Value:** Access anywhere, team scalability, professional infrastructure
+
+### Enhancement Set 6: AI Improvements (Ongoing)
+- Multi-model support (Claude, GPT-4, Gemini)
+- A/B testing of prompts
+- Fine-tuned models
+- Voice input
+- Image generation (DALL-E, Midjourney)
+- AI-powered insights
+
+**Value:** Quality improvement, cost optimization, unique advantage
+
+---
+
+# Logical Dependency Chain
+
+## Layer 1: Foundation (Week 1-2)
+
+**Must be built first:**
+
+1. **Project Setup** → Everything depends on this
+2. **Database Schema** → Data layer must exist
+3. **Authentication** → Security gate for all features
+4. **Dashboard Shell** → UI framework for features
+
+**Deliverable:** Deployable app with login + empty dashboard
+
+## Layer 2: Core Data (Week 3-4)
+
+**Establishes data foundation:**
+
+5. **Client API** → Root of all entities
+6. **Client Onboarding UI** → Builds on Client API
+7. **Client Directory** → Builds on Client API
+8. **Client Detail Shell** → Builds on API + Directory
+9. **Notes & Activity** → Builds on Detail Page
+
+**Deliverable:** Complete client management system
+
+## Layer 3: AI Infrastructure (Week 5 first half)
+
+**Required before content generation:**
+
+10. **Job Queue** → All AI must be async
+11. **Claude API Integration** → Builds on Queue
+12. **Prompt Templates** → Builds on Claude API
+
+**Deliverable:** AI generation infrastructure ready
+
+## Layer 4: Business Plan Feature (Week 5-6)
+
+**First complete AI feature:**
+
+13. **Plan Generation** → Builds on AI Infrastructure + Client Detail
+14. **Plan Editor** → Builds on Generation
+15. **Plan Versioning** → Builds on Editor
+16. **Plan Status Workflow** → Builds on Editor
+
+**Deliverable:** End-to-end business plan generation
+
+## Layer 5: PDF Generation (Week 6)
+
+**Requires content to exist:**
+
+17. **PDF Engine** → Builds on Business Plan content
+18. **PDF Templates** → Builds on Engine
+19. **PDF Export Integration** → Builds on Templates + Job Queue
+
+**Deliverable:** Professional PDF export
+
+## Layer 6: Deliverables (Week 7)
+
+**Reuses business plan infrastructure:**
+
+20. **Deliverable API** → Reuses Plan patterns
+21. **Deliverable UI** → Builds on Client Detail + API
+22. **Context-Aware Generation** → Builds on Prompt System + API
+23. **Deliverable Editor/Workflow** → Reuses Plan Editor + PDF
+
+**Deliverable:** Complete deliverables system (8-month engagement)
+
+## Layer 7: Files & Storage (Week 8 first half)
+
+**Supporting infrastructure:**
+
+24. **File Storage** → Builds on Client API
+25. **File Upload** → Builds on Storage
+26. **Files Library UI** → Builds on Upload
+27. **Auto-Categorization** → Builds on Library + PDF
+
+**Deliverable:** Complete file management
+
+## Layer 8: Backup (Week 8 second half)
+
+**Data protection:**
+
+28. **Backup Engine** → Builds on Database
+29. **Backup Scheduler** → Builds on Engine
+30. **Backup UI** → Builds on Scheduler
+
+**Deliverable:** Automated backup system
+
+## Layer 9: Settings (Week 8 final)
+
+**System management:**
+
+31. **Settings Framework** → Builds on Dashboard + Auth
+32. **API Configuration** → Builds on Framework + Claude API
+33. **System Monitoring** → Builds on Framework + various systems
+
+**Deliverable:** Complete MVP ready for production
+
+## Phase 2 Dependencies (Post-Week 8)
+
+34. **Instantly.ai Integration** → Depends on Settings
+35. **Chat Inbox** → Depends on Client Detail + Instantly.ai
+36. **Auto-Summarization** → Depends on Claude API + Chat
+37. **Admin Analytics** → Depends on Dashboard + Instantly.ai
+38. **Client KPIs** → Depends on Client Detail + Analytics
+39. **AI Next-Steps** → Depends on multiple features
+
+## Key Principles
+
+1. **Always Deployable:** Each layer delivers stable, deployable system
+2. **Visible Progress:** Each layer adds user-facing value
+3. **MVP First:** Basic implementation, enhance later
+4. **Reuse Before Rebuild:** Later features reuse earlier patterns
+5. **Test Critical Paths:** Business plan generation validated early (Layer 4)
+6. **Infrastructure Before Features:** Queue, AI, PDF built before features needing them
+
+---
+
+# Risks and Mitigations
+
+## Technical Challenges
+
+### Risk 1: AI Generation Quality
+
+**Impact:** High - core value fails if outputs unusable  
+**Likelihood:** Medium
+
+**Mitigation:**
+- Iterative prompt engineering with real client data
+- Structured prompts with examples and constraints
+- Context-rich prompts (all client data included)
+- Human-in-loop (editor before PDF export)
+- Template versioning (revert if quality regresses)
+- Feedback loop (track edits, improve prompts)
+- Multiple generation attempts allowed
+
+**Metric:** ≥80% usable with <15 min editing
+
+### Risk 2: PDF Performance & Quality
+
+**Impact:** Medium - delays workflow, unprofessional output  
+**Likelihood:** Medium
+
+**Mitigation:**
+- Template caching
+- Async generation (never block UI)
+- Playwright optimization (headless, minimal features)
+- Font embedding (consistent rendering)
+- Extensive print CSS testing
+- Quality validation (automated checks)
+- HTML fallback if PDF fails
+
+**Metric:** <30 sec generation, 300 DPI, zero layout issues
+
+### Risk 3: SQLite Concurrency
+
+**Impact:** High - data corruption catastrophic  
+**Likelihood:** Low for single admin
+
+**Mitigation:**
+- Single admin use (MVP)
+- Job queue serialization (one AI job at time)
+- WAL mode enabled
+- Daily backups with verification
+- Migration path to PostgreSQL (if team scales)
+- Prisma connection pooling
+
+**Metric:** Zero corruption, successful backup/restore tests
+
+### Risk 4: Instantly.ai Dependency
+
+**Impact:** Medium - lose campaign visibility  
+**Likelihood:** Medium
+
+**Mitigation:**
+- Cache data locally
+- Graceful degradation (show cached with timestamp)
+- Retry logic with exponential backoff
+- Health monitoring (alert if sync fails >1 hour)
+- Manual sync button
+- Pin API version
+- Chat inbox is nice-to-have (core features unaffected)
+
+**Metric:** <5% sync failure, data <30 min stale
+
+### Risk 5: Storage Exhaustion
+
+**Impact:** Medium - system stops when disk full  
+**Likelihood:** Medium over time
+
+**Mitigation:**
+- Proactive monitoring (alert at 80% = 40GB)
+- Automatic cleanup (temp files >7 days, old versions)
+- PDF compression
+- Manual cleanup UI in Settings
+- 50GB supports 100 clients × ~500MB each
+- Cloud migration path if needed
+- Backup rotation (30-day retention)
+
+**Metric:** <80% usage during MVP, no unexpected disk full
+
+## Figuring Out MVP
+
+### Risk 6: Scope Creep
+
+**Impact:** High - delays launch  
+**Likelihood:** High
+
+**Mitigation:**
+- Fixed Phase 1 roadmap (new ideas → Phase 2 backlog)
+- Value-driven prioritization (enables core business plan generation?)
+- Weekly scope reviews (if behind, cut nice-to-haves)
+- Feature flags (ship incomplete, enable later)
+- User feedback after MVP (build what's needed)
+- Time-boxing (2-week sprints)
+
+**Metric:** MVP launches Week 8 with all core features
+
+### Risk 7: Incorrect MVP Features
+
+**Impact:** High - wasted effort, user dissatisfaction  
+**Likelihood:** Medium
+
+**Mitigation:**
+- Product owner (Arunav) involved throughout
+- Weekly demos and feedback
+- Minimum viable: onboard → generate plan → export PDF
+- Quick wins first (business plan generation)
+- Iterative releases (demo every 2 weeks)
+- Jobs-to-be-Done framework (clear value per feature)
+- Post-MVP survey (1 month usage)
+
+**Metric:** Admin generates ≥5 business plans in first month
+
+### Risk 8: Underestimating Prompt Engineering
+
+**Impact:** Medium - delays MVP or poor AI quality  
+**Likelihood:** High
+
+**Mitigation:**
+- Allocate 20% time to prompts (not afterthought)
+- YAML templates enable rapid iteration
+- Start simple (good enough for MVP, refine post-launch)
+- Reuse patterns (business plan → deliverables)
+- Reference Anthropic docs and community
+- Test with 5-10 realistic client profiles
+
+**Metric:** ≥80% usable quality
+
+## Resource Constraints
+
+### Risk 9: Single Developer Bottleneck
+
+**Impact:** High - timeline delays  
+**Likelihood:** Medium
+
+**Mitigation:**
+- Phased staffing (frontend specialist Weeks 5-8 if possible)
+- Clear documentation (anyone can continue)
+- Weekly check-ins (blockers identified early)
+- Buffer time in 8-week plan
+- Pre-built components (shadcn, Prisma, NextAuth)
+- Self code review (24hr delay for fresh eyes)
+
+**Metric:** No blocker >2 days, MVP ships Week 8
+
+### Risk 10: API Cost Overruns
+
+**Impact:** Medium - budget constraints  
+**Likelihood:** Medium
+
+**Mitigation:**
+- Cost modeling (estimate ~$50-100/month for 100 clients)
+- Usage monitoring (track tokens in database)
+- Rate limiting (max 10 generations/day if costs spike)
+- Caching (common responses)
+- Model selection (Sonnet cost-effective, Haiku for summaries)
+- Manual fallback if budget exhausted
+
+**Metric:** <$200/month with 50-100 clients
+
+### Risk 11: Insufficient Testing
+
+**Impact:** High - data loss, poor UX, lost trust  
+**Likelihood:** Medium
+
+**Mitigation:**
+- TDD (tests alongside features)
+- E2E for critical paths (onboard → generate → PDF)
+- Unit tests for business logic
+- QA checklist Week 8
+- Staging environment
+- Gradual rollout (5-10 clients first)
+
+**Metric:** Zero critical bugs first month, <5 minor/month
+
+---
+
+# Appendix
+
+## Technical Decisions
+
+### AI Model: Claude Sonnet
+
+**Why:** Excels at long-form structured content, 200K context, professional tone, competitive pricing ($3/$15 per 1M tokens), reliable API
+
+**Alternatives Considered:** GPT-4 Turbo (less aligned for formal writing), Gemini Pro (unproven for structured outputs)
+
+### PDF Engine: Playwright
+
+**Why:** Faster than Puppeteer, Docker-friendly, multi-browser, active Microsoft development, excellent print CSS support
+
+**Alternatives Considered:** Puppeteer (mature but slower), PDFKit (manual layout vs HTML/CSS)
+
+### Email: Resend or Nodemailer
+
+**Why:** Flexible - Resend (modern API, great DX, free tier) or Nodemailer (zero cost via Gmail, more control)
+
+**Decision:** Both supported, user chooses in Settings
+
+### Storage: Local Filesystem
+
+**Why:** Zero-config, fast, free, offline-first (Phase 1 requirement)
+
+**Migration:** Code abstracts file service, easy swap to S3 later
+
+## Environment Variables
+
+```bash
+DATABASE_URL="file:./data/wavelaunch.db"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="[generate-random]"
+ANTHROPIC_API_KEY="sk-ant-..."
+OPENAI_API_KEY="sk-..." # Optional
+RESEND_API_KEY="re_..." # Or SMTP credentials
+SMTP_HOST/PORT/USER/PASS
+INSTANTLY_API_KEY="..." # Phase 2
+NODE_ENV="development"
+MAX_FILE_SIZE_MB="10"
+STORAGE_LIMIT_GB="50"
+```

@@ -1,0 +1,967 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Initialize Next.js 16 Project with TypeScript",
+        "description": "Set up a new Next.js 16 application with App Router, TypeScript, Tailwind CSS, and shadcn/ui components",
+        "details": "Create a new Next.js 16 project using create-next-app with TypeScript support. Configure App Router, set up Tailwind CSS with custom theme colors (#0F1724, #FF6B6B), and install shadcn/ui components. Configure ESLint and Prettier for code consistency. Set up the project structure with /app, /components, /lib, and /types directories. Initialize git repository and create .env.example file with all required environment variables.",
+        "testStrategy": "Verify the development server runs on http://localhost:3000, check that TypeScript compilation succeeds, ensure Tailwind CSS is properly configured by testing custom colors, verify shadcn/ui components render correctly with a sample component test",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Run create-next-app with TypeScript and App Router",
+            "description": "Initialize a new Next.js 16 project using create-next-app with TypeScript support, App Router enabled, and Tailwind CSS included in the setup wizard",
+            "dependencies": [],
+            "details": "Execute 'npx create-next-app@latest wavelaunchos --typescript --app --tailwind --eslint' with appropriate options selected. Configure the project to use pnpm as the package manager. Ensure src directory structure is NOT used and the app directory is at the project root level.",
+            "status": "done",
+            "testStrategy": "Verify that 'pnpm dev' starts the development server on http://localhost:3000 and the default Next.js page loads successfully",
+            "updatedAt": "2025-11-06T12:01:14.968Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Configure Tailwind CSS with custom theme colors",
+            "description": "Update tailwind.config.ts to include Wavelaunch brand colors (#0F1724 and #FF6B6B) and configure Inter and Lora fonts",
+            "dependencies": [
+              1
+            ],
+            "details": "Modify tailwind.config.ts to add custom colors under theme.extend.colors as 'brand-dark' (#0F1724) and 'brand-accent' (#FF6B6B). Configure font families for Inter (UI/body text) and Lora (headings) using next/font. Update globals.css with CSS custom properties for the color scheme.",
+            "status": "done",
+            "testStrategy": "Create a test component using the custom colors and verify they render correctly in the browser",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T12:01:47.124Z"
+          },
+          {
+            "id": 3,
+            "title": "Install and configure shadcn/ui components library",
+            "description": "Set up shadcn/ui with the CLI tool, configure components.json, and install essential components like Button, Card, Input, and Dialog",
+            "dependencies": [
+              2
+            ],
+            "details": "Run 'npx shadcn-ui@latest init' to initialize shadcn/ui. Configure with New York style, dark mode support, and CSS variables. Install core components: button, card, input, dialog, dropdown-menu, form, label, textarea, toast, and tabs using the shadcn CLI.",
+            "status": "done",
+            "testStrategy": "Import and render a shadcn/ui Button component in a test page to verify proper installation and styling",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T12:02:05.440Z"
+          },
+          {
+            "id": 4,
+            "title": "Set up project directory structure and configuration",
+            "description": "Create the required directory structure with /app, /components, /lib, and /types folders, configure ESLint and Prettier for code consistency",
+            "dependencies": [
+              3
+            ],
+            "details": "Create directory structure: /app (for routes), /components (UI components), /lib (utilities and services), /types (TypeScript definitions). Install and configure Prettier with .prettierrc. Update ESLint config to work with Prettier. Add format and lint scripts to package.json.",
+            "status": "done",
+            "testStrategy": "Run 'pnpm lint' and 'pnpm format' commands to verify configuration works without errors",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T12:02:22.664Z"
+          },
+          {
+            "id": 5,
+            "title": "Initialize git repository and create environment template",
+            "description": "Set up git repository with proper .gitignore, create .env.example with all required environment variables documented",
+            "dependencies": [
+              4
+            ],
+            "details": "Initialize git repository if not already done. Update .gitignore to exclude .env, /data, node_modules, and build artifacts. Create .env.example with placeholders for DATABASE_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, ANTHROPIC_API_KEY, and other API keys. Add README.md with setup instructions.",
+            "status": "done",
+            "testStrategy": "Verify git status shows clean working directory and .env.example contains all required variables with documentation",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T12:02:45.382Z"
+          }
+        ],
+        "updatedAt": "2025-11-06T12:02:45.382Z"
+      },
+      {
+        "id": "2",
+        "title": "Configure Prisma ORM with SQLite Database",
+        "description": "Set up Prisma ORM with SQLite database and define complete data schema for all entities",
+        "details": "Install Prisma and configure SQLite database at /data/wavelaunch.db. Create comprehensive Prisma schema with all entities: User, Client, BusinessPlan, Deliverable, File, ChatThread, ChatMessage, PromptTemplate, Job, Note, Activity, ClientKPI, BackupLog. Set up proper relationships, indexes, and constraints. Configure Prisma client singleton pattern for Next.js. Enable WAL mode for SQLite. Create database seed script with sample admin user.",
+        "testStrategy": "Run prisma migrate dev to create database, verify all tables are created with proper relationships, test CRUD operations on Client model, ensure database file is created at correct location, verify WAL mode is enabled",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Prisma, SQLite, and Initialize Prisma Project",
+            "description": "Set up Prisma and SQLite dependencies, initialize Prisma, and configure the environment for database access.",
+            "dependencies": [],
+            "details": "Run `npm install prisma @prisma/client sqlite3` to add dependencies. Use `npx prisma init --datasource-provider sqlite` to initialize Prisma. Ensure the .env file contains `DATABASE_URL=\"file:./data/wavelaunch.db\"` and the SQLite database file is located at /data/wavelaunch.db. Create the /data directory if it does not exist.",
+            "status": "done",
+            "testStrategy": "Verify that the prisma/schema.prisma and .env files are created and that the database file is accessible at the specified path.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T13:05:39.356Z"
+          },
+          {
+            "id": 2,
+            "title": "Define Prisma Schema for All Entities with Relationships and Constraints",
+            "description": "Create a comprehensive Prisma schema in schema.prisma, modeling all required entities and their relationships, indexes, and constraints.",
+            "dependencies": [
+              1
+            ],
+            "details": "Edit prisma/schema.prisma to define models: User, Client, BusinessPlan, Deliverable, File, ChatThread, ChatMessage, PromptTemplate, Job, Note, Activity, ClientKPI, BackupLog. Set up primary keys, foreign keys, unique constraints, and indexes as needed. Ensure all relationships (one-to-many, many-to-many) are explicitly modeled according to project requirements.",
+            "status": "done",
+            "testStrategy": "Run `npx prisma validate` to check schema correctness. Review generated Prisma Client types for all entities and relationships.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T13:06:22.890Z"
+          },
+          {
+            "id": 3,
+            "title": "Run Migrations and Enable SQLite WAL Mode",
+            "description": "Apply the schema to the database using Prisma migrations and configure SQLite to use Write-Ahead Logging (WAL) mode.",
+            "dependencies": [
+              2
+            ],
+            "details": "Run `npx prisma migrate dev --name init` to create the database schema. After migration, execute a SQL command (`PRAGMA journal_mode=WAL;`) on the database to enable WAL mode, either via a migration script or a post-migration step.",
+            "status": "done",
+            "testStrategy": "Check that all tables are created in /data/wavelaunch.db and that WAL mode is active by querying `PRAGMA journal_mode;`.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T13:06:47.414Z"
+          },
+          {
+            "id": 4,
+            "title": "Implement Prisma Client Singleton Pattern for Next.js",
+            "description": "Create a reusable Prisma Client instance using the singleton pattern to prevent multiple connections in Next.js development.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add a utility (e.g., lib/prisma.ts) that exports a singleton PrismaClient instance, following Next.js best practices to avoid hot-reload issues. Ensure all server-side code imports this singleton for database access.",
+            "status": "done",
+            "testStrategy": "Test that multiple imports of the Prisma client do not create multiple connections and that queries work across API routes and server components.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T13:07:18.734Z"
+          },
+          {
+            "id": 5,
+            "title": "Create Database Seed Script with Sample Admin User",
+            "description": "Develop a seed script to populate the database with initial data, including a sample admin user and any required baseline records.",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement a script (e.g., prisma/seed.ts) that uses the Prisma Client to insert a sample admin user and any other essential seed data. Configure package.json to run the seed script with `prisma db seed`. Document credentials for the admin user.",
+            "status": "done",
+            "testStrategy": "Run the seed script and verify that the admin user and other seed data are present in the database using Prisma Studio or direct queries.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-06T13:07:47.889Z"
+          }
+        ],
+        "updatedAt": "2025-11-06T13:07:47.889Z"
+      },
+      {
+        "id": "3",
+        "title": "Implement NextAuth.js Authentication System",
+        "description": "Set up secure authentication with NextAuth.js for session management and protected routes",
+        "details": "Configure NextAuth.js with credentials provider for local authentication. Implement bcrypt password hashing (12 rounds), HTTP-only secure session cookies, and JWT tokens. Create login page at /auth/signin with form validation using React Hook Form + Zod. Implement session provider wrapper, route protection middleware, and useAuth hook. Add role-based access control (ADMIN/CLIENT roles). Configure session timeout and refresh logic.",
+        "testStrategy": "Test login flow with valid/invalid credentials, verify password hashing works correctly, ensure protected routes redirect to login, test session persistence across page refreshes, verify role-based access works",
+        "priority": "high",
+        "dependencies": [
+          "2"
+        ],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and Configure NextAuth.js with Credentials Provider",
+            "description": "Set up NextAuth.js in the project, configure the credentials provider for local authentication, and ensure TypeScript support.",
+            "dependencies": [],
+            "details": "Install next-auth and required peer dependencies. Create the API route at pages/api/auth/[...nextauth].ts. Configure the credentials provider to use email and password. Ensure TypeScript types are set up for NextAuth.js, including module augmentation for custom session/user fields if needed. Reference official and example repositories for structure and best practices.",
+            "status": "pending",
+            "testStrategy": "Verify that the /api/auth endpoints are available and that the credentials provider appears on the sign-in page.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Secure Password Hashing and User Validation Logic",
+            "description": "Integrate bcrypt for password hashing (12 rounds) and implement user validation logic in the credentials provider.",
+            "dependencies": [
+              1
+            ],
+            "details": "Install bcryptjs or bcrypt. In the authorize callback of the credentials provider, fetch the user from the database and compare the hashed password using bcrypt.compare. Ensure new user registration hashes passwords with 12 rounds. Handle errors for invalid credentials securely.",
+            "status": "pending",
+            "testStrategy": "Test login with valid and invalid credentials, confirm that passwords are stored hashed, and verify that login fails with incorrect passwords.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Set Up Session Management with Secure Cookies and JWT",
+            "description": "Configure NextAuth.js to use HTTP-only, secure session cookies and JWT tokens. Set session timeout and refresh logic.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "In [...nextauth].ts, set session strategy to 'jwt'. Configure cookies to be HTTP-only and secure. Set session maxAge and updateAge for timeout and refresh. Ensure JWT includes user roles and other claims as needed. Follow NextAuth.js documentation for secure cookie and JWT setup.",
+            "status": "pending",
+            "testStrategy": "Check that session cookies are HTTP-only and secure, JWT tokens contain correct claims, and session expires/refreshes as configured.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Authentication UI and Session Provider Integration",
+            "description": "Build the /auth/signin page with React Hook Form and Zod validation. Wrap the app with SessionProvider and implement useAuth hook.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Create /pages/auth/signin.tsx with a login form using React Hook Form and Zod for validation. Display errors for invalid input. In _app.tsx, wrap the app with SessionProvider from next-auth/react. Implement a useAuth hook for accessing session and user info. Ensure UI follows project conventions.",
+            "status": "pending",
+            "testStrategy": "Test form validation, successful and failed logins, and that session data is accessible throughout the app.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Route Protection, Role-Based Access, and Middleware",
+            "description": "Add middleware to protect routes, enforce role-based access (ADMIN/CLIENT), and handle session checks.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Create middleware (middleware.ts or withAuth HOC) to check authentication and user roles before allowing access to protected routes. Redirect unauthenticated users to /auth/signin. Enforce ADMIN/CLIENT role checks where required. Ensure session is validated on each request and roles are available in the session object.",
+            "status": "pending",
+            "testStrategy": "Attempt to access protected routes as unauthenticated and unauthorized users, verify correct redirects and access control, and test role-based UI rendering.",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2025-11-06T13:11:34.082Z"
+      },
+      {
+        "id": "4",
+        "title": "Build Dashboard Layout with Navigation",
+        "description": "Create the main dashboard shell with persistent sidebar navigation and responsive design",
+        "details": "Build dashboard layout using shadcn/ui components with persistent sidebar containing navigation links: Dashboard, Clients, Files, Chat, Analytics, Templates, Settings. Implement responsive hamburger menu for mobile. Add user profile dropdown with logout option. Create breadcrumb navigation component. Set up Wavelaunch branding with logo, colors (#0F1724, #FF6B6B), and Inter/Lora fonts. Implement keyboard navigation support and focus management.",
+        "testStrategy": "Test navigation between all routes, verify responsive behavior at 375px, 768px, and 1920px breakpoints, ensure keyboard navigation works, test logout functionality, verify branding elements display correctly",
+        "priority": "high",
+        "dependencies": [
+          "3"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Dashboard Layout Shell with shadcn/ui Components",
+            "description": "Create the main dashboard shell using shadcn/ui components, including a persistent sidebar and header area.",
+            "dependencies": [],
+            "details": "Implement a React component structure with a sidebar and header using shadcn/ui. Ensure the layout uses flexbox for full-height, responsive design. Placeholders for navigation, branding, and content area should be included. Follow existing patterns for layout components as seen in AdminLayout.js and Sidebar.js.",
+            "status": "pending",
+            "testStrategy": "Render the layout and verify sidebar/header presence and correct structure on desktop and mobile breakpoints.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Sidebar Navigation with Route Integration",
+            "description": "Build the sidebar navigation with links to Dashboard, Clients, Files, Chat, Analytics, Templates, and Settings, integrating with React Router.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use shadcn/ui and React Router to create Sidebar and SidebarItem components. Ensure active route highlighting and accessibility. Follow conventions from Sidebar.js and SidebarItem.js for navigation structure and styling.",
+            "status": "pending",
+            "testStrategy": "Click each navigation link and verify correct route change and active state. Test keyboard navigation for accessibility.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Responsive Hamburger Menu and Focus Management",
+            "description": "Implement a hamburger menu for mobile view and ensure keyboard navigation and focus management for accessibility.",
+            "dependencies": [
+              2
+            ],
+            "details": "Detect screen size and toggle sidebar visibility with a hamburger icon on mobile. Use shadcn/ui for menu components and manage focus using React hooks. Ensure sidebar can be opened/closed via keyboard and focus is trapped when open.",
+            "status": "pending",
+            "testStrategy": "Resize window to mobile breakpoints and verify hamburger menu appears and toggles sidebar. Test keyboard navigation and focus trapping.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Integrate User Profile Dropdown and Logout Functionality",
+            "description": "Add a user profile dropdown in the header with logout option, styled according to shadcn/ui and existing conventions.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a dropdown menu in the header using shadcn/ui. Include user avatar, profile link, and logout button. Implement logout logic and ensure dropdown is accessible via keyboard.",
+            "status": "pending",
+            "testStrategy": "Open dropdown via mouse and keyboard, verify logout triggers correct action, and check accessibility.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Apply Wavelaunch Branding and Add Breadcrumb Navigation",
+            "description": "Set up Wavelaunch branding with logo, colors (#0F1724, #FF6B6B), Inter/Lora fonts, and implement a breadcrumb navigation component.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Update layout and sidebar/header to use specified colors and fonts. Add logo to sidebar/header. Implement a breadcrumb component for navigation context, following shadcn/ui and project conventions.",
+            "status": "pending",
+            "testStrategy": "Verify branding elements display correctly, fonts are loaded, and breadcrumb updates with route changes.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "title": "Implement Client Management System",
+        "description": "Build complete client onboarding, directory, and detail pages with activity tracking",
+        "details": "Create client onboarding form with fields for creator name, brand name, email, social handles, niche, goals. Implement real-time validation with Zod schemas, duplicate email checking, and 100-client capacity limit. Build searchable client directory with DataTable component supporting search, filter, sort, and pagination. Create client detail page with tabs (Overview, Business Plan, Deliverables, Files, Chat, Notes). Implement rich text notes with TipTap editor and activity log tracking all client interactions.",
+        "testStrategy": "Test onboarding form validation and submission, verify 100-client limit enforcement, test search/filter/sort in directory, ensure all tabs load correctly on detail page, verify activity log captures all events, test rich text editor functionality",
+        "priority": "high",
+        "dependencies": [
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Client Onboarding Form with Validation",
+            "description": "Create a client onboarding form with fields for creator name, brand name, email, social handles, niche, and goals. Integrate real-time validation using Zod schemas, check for duplicate emails, and enforce a 100-client capacity limit.",
+            "dependencies": [],
+            "details": "Analyze existing form components and validation patterns in the codebase. Use Zod for schema validation, following the project's established validation approach. Implement duplicate email checking by querying the client list before submission. Enforce the 100-client limit by disabling the form or showing an error if the limit is reached. Ensure the form UI matches the project's design system and integrates with the current state management solution (likely React Context or Redux).",
+            "status": "pending",
+            "testStrategy": "Write unit and integration tests for form validation, duplicate email detection, and client limit enforcement. Test with valid, invalid, and edge-case inputs.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Develop Searchable and Paginated Client Directory with DataTable",
+            "description": "Build a client directory page using a DataTable component that supports search, filter, sort, and pagination for up to 100 clients.",
+            "dependencies": [
+              1
+            ],
+            "details": "Review existing DataTable or list components for reuse. Implement the directory using the project's preferred table library or custom component, ensuring it supports searching by name/email, filtering by niche/goals, sorting by columns, and paginating results. Integrate with the state management and backend API for fetching and updating client data. Follow UI/UX conventions from the codebase.",
+            "status": "pending",
+            "testStrategy": "Test search, filter, sort, and pagination with various client datasets. Verify correct rendering and interaction for edge cases (e.g., empty results, max clients).",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Client Detail Page with Tabbed Interface",
+            "description": "Implement a client detail page featuring tabs for Overview, Business Plan, Deliverables, Files, Chat, and Notes, each displaying relevant client data.",
+            "dependencies": [
+              2
+            ],
+            "details": "Analyze routing and page layout patterns in the codebase. Use the existing tab component or implement a new one consistent with the design system. Each tab should load its data efficiently, using lazy loading or code splitting if appropriate. Ensure navigation between tabs is smooth and state is preserved. Integrate with backend APIs or state management for fetching client-specific data.",
+            "status": "pending",
+            "testStrategy": "Test navigation between tabs, data loading for each tab, and correct display of client information. Verify URL routing and deep linking to specific tabs.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Integrate Rich Text Notes with TipTap Editor and Activity Logging",
+            "description": "Add a rich text notes section to the client detail page using the TipTap editor, and implement an activity log that tracks all client interactions.",
+            "dependencies": [
+              3
+            ],
+            "details": "Check for existing TipTap or rich text editor usage in the codebase and follow established integration patterns. Implement the notes feature with full TipTap functionality (formatting, links, etc.). For the activity log, define the event schema and ensure all relevant client actions (creation, edits, file uploads, etc.) are recorded. Display the activity log in a readable, chronological format within the detail page.",
+            "status": "pending",
+            "testStrategy": "Test rich text editing, saving, and retrieval of notes. Simulate client interactions and verify activity log entries are accurate and complete.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Backend Integration and State Management for Client System",
+            "description": "Connect all client management features to the backend API and ensure consistent state management across onboarding, directory, and detail pages.",
+            "dependencies": [
+              4
+            ],
+            "details": "Review API endpoints and data models for clients. Use the project's preferred state management solution (e.g., React Context, Redux) to synchronize client data across components. Ensure all CRUD operations (create, read, update, delete) are handled with proper error handling and optimistic UI updates where appropriate. Maintain code consistency with existing API and state patterns.",
+            "status": "pending",
+            "testStrategy": "Test end-to-end flows: onboarding a client, viewing in directory, accessing detail page, editing notes, and verifying backend data consistency. Check for race conditions and state sync issues.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "6",
+        "title": "Create Job Queue Infrastructure",
+        "description": "Implement persistent job queue system for asynchronous task processing",
+        "details": "Build file-based persistent job queue or integrate BullMQ with Redis. Support job types: generate-business-plan, generate-deliverable, generate-pdf, summarize-thread, backup-db, sync-instantly. Implement persistence across server restarts, retry logic with exponential backoff (max 3 attempts), status tracking (QUEUED/PROCESSING/COMPLETED/FAILED), concurrency limits, and priority levels. Create job monitoring UI in dashboard showing queue status and job history.",
+        "testStrategy": "Test job creation and processing, verify retry logic works with simulated failures, ensure jobs persist across server restarts, test concurrency limits, verify job status updates correctly, test priority ordering",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Select and Integrate Persistent Job Queue Library",
+            "description": "Evaluate and choose between BullMQ (Redis-backed) or a file/SQLite-based persistent queue for job management, then integrate the selected library into the codebase.",
+            "dependencies": [],
+            "details": "Review existing code for any prior queue implementations or Redis integrations. If BullMQ is chosen, ensure Redis is available and properly configured. If a file/SQLite-based queue is selected, ensure persistence and recovery logic is robust. Set up the queue infrastructure in a dedicated module following existing code organization and dependency injection patterns.",
+            "status": "pending",
+            "testStrategy": "Verify queue initialization, persistence across restarts, and integration with the app by running basic enqueue/dequeue operations.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Job Types and Processing Logic",
+            "description": "Define and register job types: generate-business-plan, generate-deliverable, generate-pdf, summarize-thread, backup-db, sync-instantly, with handlers for each.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a job processor module that maps each job type to its handler function. Follow existing code patterns for modularity and error handling. Ensure each handler can report status and errors, and that job data is validated before processing.",
+            "status": "pending",
+            "testStrategy": "Enqueue test jobs for each type and verify correct handler execution and output. Simulate errors to ensure error handling and status updates.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Persistence, Retry Logic, Status Tracking, Concurrency, and Priority",
+            "description": "Configure the queue for persistence across restarts, implement retry logic with exponential backoff (max 3 attempts), status tracking (QUEUED/PROCESSING/COMPLETED/FAILED), concurrency limits, and priority levels.",
+            "dependencies": [
+              2
+            ],
+            "details": "Use queue library features or custom logic to persist jobs, track and update job status, and enforce concurrency and priority. Implement exponential backoff for retries and ensure failed jobs are marked appropriately after max attempts.",
+            "status": "pending",
+            "testStrategy": "Simulate server restarts to verify job persistence. Test retry logic by forcing job failures. Check that status updates and priority ordering work as expected under load.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Expose Job Queue API Endpoints",
+            "description": "Create API endpoints for job creation, status querying, and job history retrieval, following existing API conventions.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add REST or GraphQL endpoints (matching current backend patterns) to enqueue jobs, fetch job status, and list job history. Ensure endpoints are secure and validate input. Integrate with existing authentication and error handling middleware.",
+            "status": "pending",
+            "testStrategy": "Use API tests to enqueue jobs, query status, and retrieve job history. Test with valid and invalid data, and verify security and error responses.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Build Job Monitoring UI in Dashboard",
+            "description": "Implement a dashboard UI component to monitor queue status and job history, displaying job states, progress, and errors.",
+            "dependencies": [
+              4
+            ],
+            "details": "Follow existing dashboard and UI component patterns (e.g., shadcn/ui). Display real-time queue stats, job lists with status, and error messages. Add filters for job type and status. Ensure responsive design and accessibility.",
+            "status": "pending",
+            "testStrategy": "Manually test UI for correct data display, filtering, and responsiveness. Use automated UI tests to verify job state updates and error handling.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "7",
+        "title": "Integrate Claude API for Document Generation",
+        "description": "Implement Claude API integration with prompt templates for AI-powered content generation",
+        "details": "Set up Anthropic Claude API client with retry logic and rate limiting. Create YAML-based prompt template system stored in /data/prompts/ with mustache variable syntax. Build prompt template manager UI with YAML editor and syntax highlighting. Implement business plan generation workflow with client data injection into prompts. Add context-aware generation for monthly deliverables (M1-M8) that includes previous months' content. Handle API errors gracefully with user-friendly messages.",
+        "testStrategy": "Test API connection with valid/invalid keys, verify prompt template variable replacement, test business plan generation with sample client data, ensure context carries through deliverable generation, test error handling for rate limits and network failures",
+        "priority": "high",
+        "dependencies": [
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Anthropic Claude API Client with Retry and Rate Limiting",
+            "description": "Implement a Claude API client in the backend with robust retry logic and rate limiting to handle API quotas and transient failures.",
+            "dependencies": [],
+            "details": "Analyze existing API integration patterns in the codebase (e.g., for OpenAI or other third-party APIs). Implement a Claude API client module using the same conventions. Integrate exponential backoff for retries and a rate limiter (e.g., bottleneck or similar). Store API keys securely using environment variables. Ensure the client exposes methods for prompt submission and response handling.",
+            "status": "pending",
+            "testStrategy": "Unit test the client with mocked API responses, simulate rate limit and network errors, verify retry and backoff behavior.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create YAML-Based Prompt Template System with Mustache Syntax",
+            "description": "Develop a prompt template loader and renderer that reads YAML files from /data/prompts/ and supports mustache-style variable interpolation.",
+            "dependencies": [
+              1
+            ],
+            "details": "Review the /data/prompts/ directory structure and file naming conventions. Implement a loader that parses YAML files and validates their schema. Integrate a mustache-compatible rendering engine to inject variables into prompt templates. Ensure templates can be listed, loaded, and rendered with dynamic data. Add schema validation for required variables.",
+            "status": "pending",
+            "testStrategy": "Test loading and rendering templates with sample YAML files, verify variable replacement, and handle missing or malformed templates gracefully.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build Prompt Template Manager UI with YAML Editor and Syntax Highlighting",
+            "description": "Implement a frontend UI for managing prompt templates, including a YAML editor with syntax highlighting and validation feedback.",
+            "dependencies": [
+              2
+            ],
+            "details": "Follow existing UI patterns and component libraries (e.g., shadcn/ui). Create a page or modal for listing, creating, editing, and deleting prompt templates. Integrate a YAML editor component (e.g., Monaco or CodeMirror) with syntax highlighting and real-time validation. Display errors for invalid YAML or missing variables. Ensure changes are persisted to /data/prompts/ via API.",
+            "status": "pending",
+            "testStrategy": "Test creating, editing, and deleting templates via the UI, verify syntax highlighting and error feedback, ensure persistence and reload.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Business Plan Generation Workflow with Client Data Injection",
+            "description": "Develop the backend and frontend logic to generate business plans using selected prompt templates and client-specific data.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Analyze existing document generation workflows for structure. Implement an endpoint that accepts client data, selects the appropriate prompt template, renders it with injected data, and calls the Claude API. Ensure the generated document is stored and linked to the client. Add UI for triggering generation and viewing results.",
+            "status": "pending",
+            "testStrategy": "Test business plan generation with various client data sets, verify correct template selection and variable injection, ensure documents are generated and stored as expected.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Context-Aware Generation for Monthly Deliverables and Graceful Error Handling",
+            "description": "Enhance the generation workflow to include previous months' content for M1-M8 deliverables and implement user-friendly error handling for API failures.",
+            "dependencies": [
+              4
+            ],
+            "details": "Extend the workflow to fetch and include relevant prior deliverables when generating new monthly content. Implement logic to aggregate and pass context to the prompt. Add comprehensive error handling for Claude API errors, rate limits, and network issues, displaying clear messages to users in the UI.",
+            "status": "pending",
+            "testStrategy": "Test monthly deliverable generation with and without prior content, simulate API errors and rate limits, verify user-facing error messages and fallback behavior.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "8",
+        "title": "Build Document Editor with Auto-save",
+        "description": "Create rich text and markdown editors for AI-generated content with versioning",
+        "details": "Implement dual-mode editor supporting HTML (TipTap) and Markdown (CodeMirror) with toggle. Add auto-save functionality every 30 seconds with debouncing. Create version history system storing multiple iterations per document. Implement status workflow (DRAFT/PENDING_REVIEW/APPROVED/DELIVERED) with approval UI. Add collaborative features like revision tracking and comparison view. Include word count, reading time, and document outline navigation.",
+        "testStrategy": "Test HTML/Markdown mode switching preserves content, verify auto-save triggers correctly, test version history creation and retrieval, ensure status transitions work correctly, verify content is properly sanitized and stored",
+        "priority": "medium",
+        "dependencies": [
+          "7"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Integrate Dual-Mode Editor (TipTap for Rich Text, CodeMirror for Markdown)",
+            "description": "Implement a document editor component supporting both rich text (HTML) and markdown modes, allowing users to toggle between TipTap and CodeMirror editors.",
+            "dependencies": [],
+            "details": "Analyze existing editor components in the codebase. Integrate TipTap for rich text editing and CodeMirror for markdown. Implement a toggle UI to switch modes, ensuring content is preserved and converted accurately between formats. Follow TypeScript and React patterns used in the project.",
+            "status": "pending",
+            "testStrategy": "Test switching between HTML and Markdown modes, verify content preservation and conversion, check editor initialization and rendering.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Auto-Save with Debouncing",
+            "description": "Add auto-save functionality that saves document changes every 30 seconds, using debouncing to prevent excessive saves.",
+            "dependencies": [
+              1
+            ],
+            "details": "Review existing save logic and storage patterns. Implement a debounced auto-save mechanism triggered every 30 seconds when changes are detected. Ensure saves are batched and do not interrupt editing. Store document state using the project's preferred persistence method (e.g., API, local storage).",
+            "status": "pending",
+            "testStrategy": "Simulate editing and verify auto-save triggers at correct intervals, ensure no duplicate saves, test with rapid changes.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Version History System",
+            "description": "Develop a system to store and retrieve multiple versions of each document, enabling users to view and restore previous iterations.",
+            "dependencies": [
+              2
+            ],
+            "details": "Analyze existing data models for document storage. Implement versioning logic to save snapshots on each auto-save or manual save. Build UI for viewing version history and restoring selected versions. Ensure compatibility with both editor modes.",
+            "status": "pending",
+            "testStrategy": "Create and edit documents, verify version snapshots are stored, test restoring previous versions, check data integrity.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Status Workflow and Approval UI",
+            "description": "Add workflow controls for document status (DRAFT, PENDING_REVIEW, APPROVED, DELIVERED) and build UI for status transitions and approvals.",
+            "dependencies": [
+              3
+            ],
+            "details": "Review existing workflow and approval components. Extend document model to include status field. Implement UI elements for status changes and approval actions, ensuring only authorized users can approve. Integrate with version history and editor state.",
+            "status": "pending",
+            "testStrategy": "Test status transitions, verify approval permissions, ensure UI updates reflect current status, check workflow integration.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Collaborative Features: Revision Tracking, Comparison View, and Document Metrics",
+            "description": "Implement collaborative editing features including revision tracking, comparison view, word count, reading time, and document outline navigation.",
+            "dependencies": [
+              4
+            ],
+            "details": "Analyze existing collaboration and metrics implementations. Add revision tracking to log changes per user. Build comparison view UI to highlight differences between versions. Integrate word count, reading time estimation, and outline navigation based on document structure. Ensure all features work in both editor modes.",
+            "status": "pending",
+            "testStrategy": "Test revision logs, compare versions for differences, verify word count and reading time accuracy, check outline navigation functionality.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "9",
+        "title": "Implement PDF Generation System",
+        "description": "Build professional PDF export using Playwright with Wavelaunch branding",
+        "details": "Set up Playwright for HTML to PDF conversion with 300 DPI output. Create PDF templates with Wavelaunch branding: logo placement, color scheme (#0F1724/#FF6B6B), Inter/Lora fonts. Build cover page generator, table of contents with page numbers, headers/footers with document info. Implement Tailwind print styles for proper formatting. Add template caching for performance. Store generated PDFs in client files with automatic categorization.",
+        "testStrategy": "Generate sample PDFs and verify 300 DPI quality, test branding elements appear correctly, ensure TOC page numbers are accurate, verify PDF file size is reasonable (<10MB), test concurrent PDF generation",
+        "priority": "medium",
+        "dependencies": [
+          "8"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Playwright and Project Structure for PDF Generation",
+            "description": "Install Playwright, configure Chromium for headless PDF export, and establish a dedicated module for PDF generation.",
+            "dependencies": [],
+            "details": "Install Playwright via npm, ensure Chromium is available, and create a new directory (e.g., /pdf) for PDF-related scripts. Establish a base Node.js module that exposes a function for HTML-to-PDF conversion using Playwright's page.pdf() method. Confirm that the module supports specifying output path and print options (e.g., 300 DPI, printBackground).",
+            "status": "pending",
+            "testStrategy": "Run a basic script to generate a 'Hello World' PDF from a static HTML file and verify output file is created at expected location.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Develop Wavelaunch-Branded PDF Templates with Tailwind Print Styles",
+            "description": "Create HTML templates for PDF export featuring Wavelaunch branding, including logo, color scheme, and custom fonts, styled for print using Tailwind.",
+            "dependencies": [
+              1
+            ],
+            "details": "Design HTML templates with placeholders for dynamic content. Integrate Wavelaunch logo, apply color scheme (#0F1724/#FF6B6B), and embed Inter/Lora fonts using @font-face or local woff files. Use Tailwind CSS with print-specific utilities and ensure -webkit-print-color-adjust: exact is set for accurate color rendering. Templates should include cover page, table of contents, and sections for headers/footers.",
+            "status": "pending",
+            "testStrategy": "Render templates in browser and generate PDFs to verify branding elements, font embedding, and print styles are correctly applied.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement Dynamic Content Generation: Cover Page, Table of Contents, Headers/Footers",
+            "description": "Build logic to inject dynamic content into templates, including cover page generator, TOC with page numbers, and document info in headers/footers.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create functions to populate template placeholders with runtime data (e.g., client name, document title, date). Implement TOC generation that calculates and inserts correct page numbers. Add header/footer sections with document metadata. Use a template engine (e.g., Handlebars or EJS) to merge data with HTML before PDF rendering.",
+            "status": "pending",
+            "testStrategy": "Generate sample PDFs with varying content, verify TOC page numbers match actual pages, and check headers/footers display correct info.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Integrate Template Caching and Optimize PDF Generation Performance",
+            "description": "Implement caching for compiled templates and optimize Playwright PDF generation for concurrent requests and file size limits.",
+            "dependencies": [
+              3
+            ],
+            "details": "Add a caching layer for compiled HTML templates to avoid redundant processing. Optimize Playwright launch/configuration for concurrent PDF generation (e.g., browser pool or queue). Set PDF options to ensure output file size remains under 10MB. Test with multiple simultaneous requests and large documents.",
+            "status": "pending",
+            "testStrategy": "Benchmark PDF generation under load, verify cache hits, and confirm output file sizes are within limits. Test concurrent generation for race conditions.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Store Generated PDFs in Client Files with Automatic Categorization",
+            "description": "Save generated PDFs to client-specific directories, categorizing files automatically based on document type and metadata.",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement logic to store PDFs in a structured file system (e.g., /clients/{clientId}/files/). Automatically categorize PDFs by type (e.g., business plan, deliverable) using metadata. Ensure file naming conventions are consistent and avoid collisions. Update client file listings to include new PDFs.",
+            "status": "pending",
+            "testStrategy": "Generate PDFs for multiple clients and document types, verify files are stored in correct locations and categorized properly. Check file listings update as expected.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "10",
+        "title": "Create File Management System",
+        "description": "Build comprehensive file storage, upload, and library interface",
+        "details": "Implement local filesystem storage at /data/clients/{id}/files/ with proper permissions. Create drag-and-drop file upload with progress indicators (max 10MB per file). Build Files Library UI with grid/list views, search by filename, filters by client/category/date. Add file preview for PDFs and images using modal viewers. Implement soft delete with 30-day recovery period. Add storage monitoring showing usage against 50GB limit with alerts at 80%. Create automatic cleanup for temp files older than 7 days.",
+        "testStrategy": "Test file upload with various formats and sizes, verify storage calculation accuracy, test soft delete and recovery, ensure preview works for supported formats, verify automatic cleanup runs correctly, test storage limit enforcement",
+        "priority": "medium",
+        "dependencies": [
+          "9"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Local Filesystem Storage Backend",
+            "description": "Set up secure local filesystem storage at /data/clients/{id}/files/ with proper permissions and directory structure.",
+            "dependencies": [],
+            "details": "Create backend logic using Node.js fs module to handle file read/write operations. Ensure directories are created per client ID, enforce file size limits (max 10MB), and set permissions to restrict unauthorized access. Integrate with existing backend patterns for error handling and logging.",
+            "status": "pending",
+            "testStrategy": "Unit test file creation, access, and permission enforcement. Attempt uploads exceeding 10MB and verify rejection.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Develop Drag-and-Drop File Upload Component with Progress Indicators",
+            "description": "Create a React/TypeScript UI component for drag-and-drop file uploads, showing progress and enforcing file size limits.",
+            "dependencies": [
+              1
+            ],
+            "details": "Build a FileUpload component using React and TypeScript. Integrate with backend API for file storage. Display upload progress bars, handle errors (size >10MB), and support multiple file uploads. Follow UI conventions from existing components for consistency.",
+            "status": "pending",
+            "testStrategy": "Test uploading files of various sizes and types, verify progress display, and ensure files >10MB are blocked.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Files Library UI with Grid/List Views, Search, and Filters",
+            "description": "Build a user interface to browse, search, and filter files by filename, client, category, and date, supporting grid and list layouts.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement a FileManager component in React/TypeScript, supporting grid/list toggling, search by filename, and filters for client/category/date. Use modal for file preview. Ensure UI matches existing design patterns and integrates with backend file metadata.",
+            "status": "pending",
+            "testStrategy": "Test searching and filtering files, switching views, and previewing supported formats. Verify UI responsiveness and accessibility.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Soft Delete and Recovery Logic with 30-Day Retention",
+            "description": "Add backend and UI logic for soft-deleting files, allowing recovery within 30 days before permanent deletion.",
+            "dependencies": [
+              3
+            ],
+            "details": "Update backend to mark files as 'deleted' and move to a recoverable state. Implement UI for viewing and restoring deleted files. Schedule automatic cleanup of files deleted for over 30 days. Ensure actions are logged and permissions enforced.",
+            "status": "pending",
+            "testStrategy": "Test deleting and recovering files, verify retention period enforcement, and confirm permanent deletion after 30 days.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Storage Monitoring and Automatic Temp File Cleanup",
+            "description": "Display storage usage against 50GB limit with alerts at 80%, and automatically clean up temp files older than 7 days.",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement backend logic to calculate total storage usage per client and trigger alerts at 80% usage. Build UI to show usage stats. Schedule periodic cleanup of temp files older than 7 days. Integrate with existing notification and scheduling systems.",
+            "status": "pending",
+            "testStrategy": "Test storage calculation accuracy, alert triggering, and verify temp files are deleted after 7 days.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "11",
+        "title": "Implement Backup and Recovery System",
+        "description": "Create automated database backup system with restore functionality",
+        "details": "Build scheduled backup service using node-cron for 2 AM daily execution. Store timestamped SQLite backups in /data/backups/ directory. Implement integrity verification using checksums after each backup. Create restore UI in Settings allowing backup selection with pre-restore safety backup. Add 30-day retention with automatic cleanup of old backups. Display backup status in admin dashboard and settings page. Include manual backup trigger and download option.",
+        "testStrategy": "Test scheduled backup execution at specified time, verify backup file integrity with restore test, ensure retention policy removes old backups, test manual backup and restore process, verify pre-restore safety backup creation",
+        "priority": "low",
+        "dependencies": [
+          "10"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Scheduled SQLite Backup Service with node-cron",
+            "description": "Set up a Node.js service using node-cron to create timestamped SQLite database backups daily at 2 AM, storing them in /data/backups/.",
+            "dependencies": [],
+            "details": "Analyze existing cron job usage and service patterns in the codebase (likely in a backend service or utility directory). Use node-cron to schedule a job that copies the SQLite database file to /data/backups/ with a timestamped filename. Ensure the backup process does not interrupt active connections. Follow existing logging and error handling conventions.",
+            "status": "pending",
+            "testStrategy": "Mock the scheduled time and verify that a backup file is created in /data/backups/ with the correct timestamp format. Check logs for successful execution.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add Backup Integrity Verification Using Checksums",
+            "description": "After each backup, compute and store a checksum (e.g., SHA256) to verify backup file integrity.",
+            "dependencies": [
+              1
+            ],
+            "details": "Review utility/helper modules for existing checksum or hashing implementations. If none exist, use a standard Node.js crypto library to generate a checksum for each backup file after creation. Store checksums in a metadata file or database table (e.g., BackupLog). Integrate this step into the backup workflow.",
+            "status": "pending",
+            "testStrategy": "Corrupt a backup file and verify that the checksum validation fails. Confirm that valid backups pass integrity checks.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement Backup Retention Policy and Automatic Cleanup",
+            "description": "Automatically delete backup files older than 30 days from /data/backups/ as part of the scheduled job.",
+            "dependencies": [
+              1
+            ],
+            "details": "Check for existing file cleanup utilities or scheduled maintenance patterns. Extend the backup service to scan /data/backups/ and remove files exceeding the 30-day retention period. Ensure deletion is logged and errors are handled gracefully.",
+            "status": "pending",
+            "testStrategy": "Create test backup files with old timestamps and verify that the cleanup process removes only those older than 30 days.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Develop Restore UI and Pre-Restore Safety Backup in Settings",
+            "description": "Create a UI in the Settings page to select and restore backups, ensuring a safety backup is created before restoring.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Follow existing UI component patterns (likely React/Next.js). Add a section in Settings to list available backups, allow selection, and trigger restore. Before restoring, automatically create a new backup as a safety measure. Integrate with backend endpoints for restore and backup listing, following API conventions.",
+            "status": "pending",
+            "testStrategy": "Restore from a backup and verify that a safety backup is created before the restore. Confirm that the database state matches the selected backup after restore.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Integrate Manual Backup, Download, and Status Display in Admin and Settings UI",
+            "description": "Enable manual backup trigger, backup file download, and display backup status in the admin dashboard and settings page.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Add UI controls for manual backup and download in both admin dashboard and settings, following existing button and notification patterns. Expose backend endpoints for manual backup and file download, ensuring authentication and authorization. Display backup status (last backup time, integrity, retention info) using existing status display components.",
+            "status": "pending",
+            "testStrategy": "Trigger manual backup and download from the UI, verify file download, and check that status information updates correctly.",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": "12",
+        "title": "Build Analytics Dashboard with KPIs",
+        "description": "Create admin and client analytics dashboards with metrics visualization",
+        "details": "Build admin dashboard displaying Instantly.ai metrics (reply rate, opportunities, conversions, warm leads) using shadcn/ui card components with trend indicators. Implement time range filters (7/30/90 days) and auto-refresh every 5 minutes. Create charts using Recharts for trend visualization. Add client KPI dashboard with manual data entry for engagement rate, sales revenue, follower growth. Include system overview showing client count, pending deliverables, and storage usage. Implement CSV/PDF export functionality.",
+        "testStrategy": "Test metric card displays with mock data, verify chart rendering and responsiveness, test time filter updates, ensure auto-refresh works correctly, verify export generates valid CSV/PDF files",
+        "priority": "low",
+        "dependencies": [
+          "11"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Dashboard Data Models and API Endpoints",
+            "description": "Define TypeScript interfaces and backend API endpoints for admin and client KPIs, metrics, and system overview data.",
+            "dependencies": [],
+            "details": "Review existing /lib/types and /app/api structure to extend or create new interfaces for metrics (reply rate, opportunities, conversions, warm leads) and client KPIs (engagement rate, sales revenue, follower growth). Design RESTful endpoints for fetching metrics, updating manual KPIs, and retrieving system overview stats. Ensure endpoints support time range filters and auto-refresh requirements.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for API endpoints using mock data. Validate correct data structure and filtering by time range.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Admin Analytics Dashboard UI with shadcn/ui and Recharts",
+            "description": "Build the admin dashboard page using shadcn/ui card components and Recharts for metrics visualization.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a new page under /app/dashboard/admin-analytics. Use shadcn/ui Card components to display metrics with trend indicators. Integrate Recharts for visualizing trends over selectable time ranges (7/30/90 days). Ensure UI matches existing dashboard layout and follows established design conventions.",
+            "status": "pending",
+            "testStrategy": "Render dashboard with mock metrics. Verify cards and charts display correct data and update on time range selection.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Develop Client KPI Dashboard with Manual Data Entry",
+            "description": "Create a client-facing dashboard for manual KPI entry and visualization, including engagement rate, sales revenue, and follower growth.",
+            "dependencies": [
+              1
+            ],
+            "details": "Add a new page under /app/dashboard/client-kpi. Implement forms for manual KPI entry using shadcn/ui input components. Store entered data via API and display KPIs with charts (Recharts) and summary cards. Ensure data validation and feedback for successful/failed submissions.",
+            "status": "pending",
+            "testStrategy": "Test form validation, submission, and chart rendering with sample data. Verify correct feedback on entry.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Integrate System Overview Section",
+            "description": "Add system overview cards showing client count, pending deliverables, and storage usage to both dashboards.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Fetch system stats from backend and display using shadcn/ui Card components. Ensure overview section is consistent across admin and client dashboards. Follow existing card layout and responsive design patterns.",
+            "status": "pending",
+            "testStrategy": "Verify system overview cards display accurate stats and update on data changes. Test responsiveness across devices.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement CSV/PDF Export Functionality for Dashboard Data",
+            "description": "Enable exporting dashboard metrics and KPIs to CSV and PDF formats from both admin and client dashboards.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Add export buttons to dashboard pages. Use existing utility functions or integrate libraries (e.g., papaparse for CSV, jsPDF for PDF) to generate exports from displayed data. Ensure exported files match current filters and selections.",
+            "status": "pending",
+            "testStrategy": "Test export buttons with various data sets and filters. Validate generated CSV/PDF files for accuracy and formatting.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Design Analytics Dashboard Layout and Navigation",
+            "description": "Create the dashboard shell for both admin and client analytics views, integrating navigation and responsive layout using shadcn/ui components.",
+            "dependencies": [],
+            "details": "Implement a dashboard page under /app/analytics with a sidebar navigation, header, and responsive design. Use shadcn/ui Card and layout primitives. Ensure the dashboard supports both admin and client roles, following the existing navigation and layout conventions established in the codebase (see dashboard and navigation patterns in /components and /app).",
+            "status": "pending",
+            "testStrategy": "Render dashboard on desktop and mobile, verify navigation links, check layout responsiveness at 375px, 768px, and 1920px.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Implement Admin Metrics Cards with Trend Indicators and Filters",
+            "description": "Build metric cards for Instantly.ai KPIs (reply rate, opportunities, conversions, warm leads) with trend indicators and time range filters (7/30/90 days).",
+            "dependencies": [
+              6
+            ],
+            "details": "Create reusable Card components for each KPI using shadcn/ui. Integrate time range filter controls and auto-refresh logic (every 5 minutes) using React hooks. Fetch and display metrics data, showing trend indicators (up/down arrows, percentage change). Follow data fetching and state management patterns from existing dashboard code (see /lib/api and /components/metrics).",
+            "status": "pending",
+            "testStrategy": "Test card rendering with mock and real data, verify filter changes update metrics, check auto-refresh updates values.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Integrate Recharts for Metrics Trend Visualization",
+            "description": "Add charts for visualizing KPI trends over selected time ranges using Recharts, matching existing chart styles and conventions.",
+            "dependencies": [
+              7
+            ],
+            "details": "Use Recharts to render line/bar charts for each KPI, displaying trends over 7/30/90 days. Ensure charts are styled with Tailwind CSS and match the look and feel of other dashboard charts (see /components/charts for existing chart implementations). Support responsive resizing and tooltip interactions.",
+            "status": "pending",
+            "testStrategy": "Verify charts render with correct data, test responsiveness, check tooltips and axis labels.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 9,
+            "title": "Build Client KPI Dashboard with Manual Data Entry and System Overview",
+            "description": "Create client-facing dashboard for manual KPI entry (engagement rate, sales revenue, follower growth) and system overview (client count, pending deliverables, storage usage).",
+            "dependencies": [
+              6
+            ],
+            "details": "Implement forms for manual KPI entry using shadcn/ui inputs and validation (see /components/forms for form patterns). Display system overview metrics using Card components. Fetch client/system data from backend or mock API, following conventions in /lib/api and /components/overview.",
+            "status": "pending",
+            "testStrategy": "Test form validation and submission, verify overview metrics display correct values, check for role-based access.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 10,
+            "title": "Implement CSV/PDF Export Functionality for Dashboard Data",
+            "description": "Add export buttons to allow users to download dashboard metrics and charts as CSV or PDF files, following existing export patterns.",
+            "dependencies": [
+              7,
+              8,
+              9
+            ],
+            "details": "Integrate export functionality using libraries such as papaparse for CSV and jsPDF for PDF. Add export buttons to dashboard views, ensuring exported files include all relevant metrics and chart data. Follow export logic and UI conventions from existing code (see /components/export or similar utilities).",
+            "status": "pending",
+            "testStrategy": "Test CSV/PDF downloads for accuracy, verify exported files open correctly, check for edge cases (empty data, large datasets).",
+            "parentId": "undefined"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2025-11-06T13:11:34.083Z",
+      "taskCount": 12,
+      "completedCount": 2,
+      "tags": [
+        "master"
+      ]
+    }
+  }
+}
