@@ -15,6 +15,9 @@ import {
   getDashboardMetrics,
   getRecentDeliverables,
   getVisitorMetrics,
+  type DashboardMetricRecord,
+  type VisitorMetricPoint,
+  type DeliverableSummary,
 } from "@/lib/data/dashboard";
 import { cn } from "@/lib/utils";
 
@@ -42,7 +45,9 @@ const statusClasses: Record<string, string> = {
 
 export default async function DashboardPage() {
   // TEMPORARY: Provide fallback data when database is not available
-  let metrics, visitorData, deliverables;
+  let metrics: DashboardMetricRecord[] = [];
+  let visitorData: VisitorMetricPoint[] = [];
+  let deliverables: DeliverableSummary[] = [];
   
   try {
     [metrics, visitorData, deliverables] = await Promise.all([
@@ -51,10 +56,8 @@ export default async function DashboardPage() {
       getRecentDeliverables(),
     ]);
   } catch (error) {
-    // Fallback empty data when DB not available
-    metrics = [];
-    visitorData = [];
-    deliverables = [];
+    // Fallback empty data when DB not available (already initialized above)
+    console.error('Dashboard data fetch failed:', error);
   }
 
   return (
