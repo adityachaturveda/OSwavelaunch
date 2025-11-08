@@ -1,18 +1,15 @@
-export enum ClientStatusEnum {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-}
+import { ClientStatus } from "@/lib/generated/prisma/enums";
 
 export const CLIENT_STATUS = [
-  ClientStatusEnum.ACTIVE,
-  ClientStatusEnum.INACTIVE,
-] as const;
+  ClientStatus.ACTIVE,
+  ClientStatus.INACTIVE,
+] as const satisfies readonly ClientStatus[];
 
-export type ClientStatusValue = (typeof CLIENT_STATUS)[number];
+export type ClientStatusValue = ClientStatus;
 
 export const CLIENT_STATUS_LABELS: Record<ClientStatusValue, string> = {
-  [ClientStatusEnum.ACTIVE]: "Active",
-  [ClientStatusEnum.INACTIVE]: "Inactive",
+  [ClientStatus.ACTIVE]: "Active",
+  [ClientStatus.INACTIVE]: "Inactive",
 };
 
 export const CLIENT_STATUS_ARRAY: ClientStatusValue[] = [...CLIENT_STATUS];

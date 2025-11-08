@@ -16,8 +16,13 @@ export async function createActivity(data: CreateActivityInput) {
     throw new ApiError("Client not found", 404, "NOT_FOUND");
   }
 
+  const { metadata, ...rest } = data;
+
   const activity = await prisma.activity.create({
-    data,
+    data: {
+      ...rest,
+      metadata: metadata !== undefined ? (metadata as Prisma.InputJsonValue) : undefined,
+    },
   });
 
   return activity;

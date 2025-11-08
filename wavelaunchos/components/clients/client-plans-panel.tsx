@@ -62,10 +62,13 @@ const formSchema = createBusinessPlanSchema
   .omit({ clientId: true, generatedById: true, contentHtml: true })
   .extend({
     contentMarkdown: z.string().min(1, "Content is required"),
-    version: z.coerce.number().int().positive().default(1),
+    version: z
+      .string()
+      .regex(/^[1-9][0-9]*$/, { message: "Version must be a positive number" })
+      .default("1"),
   });
 
-type PlanFormValues = z.infer<typeof formSchema>;
+type PlanFormValues = z.input<typeof formSchema>;
 
 const statusOptions = Object.values(PlanStatus);
 
@@ -86,7 +89,7 @@ export function ClientPlansPanel({ clientId }: ClientPlansPanelProps) {
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      version: 1,
+      version: "1",
       status: PlanStatus.DRAFT,
       contentMarkdown: "",
     },
@@ -152,12 +155,15 @@ export function ClientPlansPanel({ clientId }: ClientPlansPanelProps) {
   const onSubmit = (values: PlanFormValues) => {
     startSubmitTransition(async () => {
       try {
+        const parsed = formSchema.parse(values);
+        const versionNumber = Number(parsed.version);
         const response = await fetch(`/api/clients/${clientId}/business-plans`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            ...values,
-            contentHtml: markdownToHtml(values.contentMarkdown),
+            ...parsed,
+            version: versionNumber,
+            contentHtml: markdownToHtml(parsed.contentMarkdown),
           }),
         });
         const payload = await parseJsonSafe<BusinessPlanRecord>(response);
@@ -184,10 +190,10 @@ export function ClientPlansPanel({ clientId }: ClientPlansPanelProps) {
         setPlans((prev) => [payload.data as BusinessPlanRecord, ...prev]);
         toast({
           title: "Plan added",
-          description: `Version ${values.version} recorded successfully.`,
+          description: `Version ${versionNumber} recorded successfully.`,
         });
         form.reset({
-          version: latestVersion + 1 || 1,
+          version: String(latestVersion + 1 || 1),
           status: PlanStatus.DRAFT,
           contentMarkdown: "",
         });

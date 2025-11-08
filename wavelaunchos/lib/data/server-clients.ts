@@ -1,5 +1,6 @@
 import { ClientStatus } from "../generated/prisma/client";
 import { prisma } from "../db/client";
+import type { ClientStatusValue } from "../constants/client";
 
 /**
  * Get all clients for display in the clients list
@@ -31,7 +32,7 @@ export async function getClientsForList() {
     name: client.brandName,
     creatorName: client.creatorName,
     brand: client.brandName,
-    status: client.status,
+    status: client.status as ClientStatusValue,
     email: client.email,
     niche: client.niche,
     projects: client._count.deliverables + client._count.businessPlans,
@@ -45,7 +46,7 @@ export async function getClientsForList() {
       ? client.activities[0]?.createdAt.toISOString()
       : null,
     createdAt: client.createdAt,
-    socialHandles: client.socialHandles as any,
+    socialHandles: client.socialHandles as Record<string, unknown> | null,
   }));
 }
 

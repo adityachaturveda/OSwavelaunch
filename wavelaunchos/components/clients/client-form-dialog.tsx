@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,8 @@ type ClientFormDialogProps = {
   onSuccess?: (client: unknown, mode: "create" | "edit") => void;
 };
 
+type ClientFormValues = z.input<typeof createClientSchema>;
+
 export function ClientFormDialog({
   open,
   onOpenChange,
@@ -62,7 +65,7 @@ export function ClientFormDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const fallbackValues: CreateClientInput = {
+  const fallbackValues: ClientFormValues = {
     creatorName: "",
     brandName: "",
     email: "",
@@ -79,7 +82,7 @@ export function ClientFormDialog({
     },
   };
 
-  const mergedDefaults: CreateClientInput = {
+  const mergedDefaults: ClientFormValues = {
     ...fallbackValues,
     ...defaultValues,
     status:
@@ -90,15 +93,16 @@ export function ClientFormDialog({
     },
   };
 
-  const form = useForm<CreateClientInput>({
+  const form = useForm<ClientFormValues>({
     resolver: zodResolver(createClientSchema),
     defaultValues: mergedDefaults,
   });
 
-  const onSubmit = async (data: CreateClientInput) => {
+  const onSubmit = async (data: ClientFormValues) => {
     setIsSubmitting(true);
 
     try {
+      const payload = createClientSchema.parse(data);
       const url = mode === "create" ? "/api/clients" : `/api/clients/${clientId}`;
       const method = mode === "create" ? "POST" : "PATCH";
 
@@ -107,13 +111,13 @@ export function ClientFormDialog({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
-      const payload = await response.json();
+      const result = await response.json();
 
-      if (!response.ok || !payload.success) {
-        throw new Error(payload.error || "Failed to save client");
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to save client");
       }
 
       toast({
@@ -126,7 +130,7 @@ export function ClientFormDialog({
 
       form.reset();
       onOpenChange(false);
-      onSuccess?.(payload.data, mode);
+      onSuccess?.(result.data, mode);
       router.refresh();
     } catch (error) {
       console.error("Error saving client:", error);

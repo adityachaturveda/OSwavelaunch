@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import { ApiError } from "@/lib/api/error-handler";
+import { FileCategory } from "@/lib/generated/prisma/enums";
 
 export async function listClientFiles(clientId: string) {
   return prisma.file.findMany({
@@ -42,8 +43,13 @@ export async function createClientFile(data: {
     throw new ApiError("Client not found", 404, "NOT_FOUND");
   }
 
+  const category = data.category in FileCategory ? (data.category as FileCategory) : FileCategory.UPLOAD;
+
   return prisma.file.create({
-    data,
+    data: {
+      ...data,
+      category,
+    },
     select: {
       id: true,
       filename: true,

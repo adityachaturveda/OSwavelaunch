@@ -8,7 +8,7 @@ export const createActivitySchema = z.object({
   clientId: z.string().cuid("Invalid client ID"),
   type: z.nativeEnum(ActivityType),
   description: z.string().min(1).max(500),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**

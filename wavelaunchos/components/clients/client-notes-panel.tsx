@@ -31,7 +31,7 @@ import { createNoteSchema } from "@/lib/validations/note";
 
 const noteFormSchema = createNoteSchema.omit({ clientId: true });
 
-type NoteFormValues = z.infer<typeof noteFormSchema>;
+type NoteFormValues = z.input<typeof noteFormSchema>;
 
 type NoteAuthor = {
   id: string;
@@ -122,18 +122,19 @@ export function ClientNotesPanel({ clientId }: ClientNotesPanelProps) {
   const onSubmit = (values: NoteFormValues) => {
     startTransition(async () => {
       try {
+        const parsed = noteFormSchema.parse(values);
         const response = await fetch(`/api/clients/${clientId}/notes`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
+          body: JSON.stringify(parsed),
         });
-        const payload = await response.json();
+        const result = await response.json();
 
-        if (!response.ok || !payload.success) {
-          throw new Error(payload.error || "Failed to create note.");
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Failed to create note.");
         }
 
-        setNotes((prev) => [payload.data as ClientNote, ...prev]);
+        setNotes((prev) => [result.data as ClientNote, ...prev]);
         form.reset({ content: "", isImportant: false });
 
         toast({

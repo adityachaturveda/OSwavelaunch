@@ -16,7 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Form,
   FormControl,
@@ -45,7 +44,6 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { DeliverableStatus } from "@/lib/generated/prisma/enums";
-import { createDeliverableSchema } from "@/lib/validations/deliverable";
 
 type DeliverableRecord = {
   id: string;
@@ -69,16 +67,18 @@ type ClientDeliverablesPanelProps = {
   clientId: string;
 };
 
-const formSchema = createDeliverableSchema
-  .omit({ clientId: true, generatedById: true, contentHtml: true })
-  .extend({
-    contentMarkdown: z.string().min(1, "Content is required"),
-    month: z.coerce.number().int().min(1).max(12),
-    target: z
-      .union([z.string().regex(/^[0-9]+$/, { message: "Must be a number" }), z.literal("")])
-      .optional()
-      .transform((value) => (value ? Number(value) : undefined)),
-  });
+const formSchema = z.object({
+  title: z.string().min(2, "Title must be at least 2 characters").max(200, "Title must be under 200 characters"),
+  sectionType: z.string().min(1, "Section type is required").max(100, "Section type must be under 100 characters"),
+  month: z
+    .string()
+    .regex(/^(?:[1-9]|1[0-2])$/, { message: "Month must be between 1 and 12" }),
+  status: z.nativeEnum(DeliverableStatus),
+  contentMarkdown: z.string().min(1, "Content is required"),
+  target: z
+    .union([z.string().regex(/^[0-9]+$/, { message: "Must be a number" }), z.literal("")])
+    .optional(),
+});
 
 type DeliverableFormValues = z.infer<typeof formSchema>;
 
@@ -110,10 +110,10 @@ export function ClientDeliverablesPanel({ clientId }: ClientDeliverablesPanelPro
     defaultValues: {
       title: "",
       sectionType: "",
-      month: 1,
+      month: "1",
       status: DeliverableStatus.DRAFT,
       contentMarkdown: "",
-      target: undefined,
+      target: "",
     },
   });
 
@@ -173,7 +173,11 @@ export function ClientDeliverablesPanel({ clientId }: ClientDeliverablesPanelPro
           body: JSON.stringify({
             ...values,
             contentHtml: markdownToHtml(values.contentMarkdown),
-            target: values.target ?? null,
+            month: Number(values.month),
+            target:
+              typeof values.target === "string" && values.target.trim().length > 0
+                ? Number(values.target)
+                : null,
           }),
         });
         const payload = await response.json();
@@ -190,10 +194,10 @@ export function ClientDeliverablesPanel({ clientId }: ClientDeliverablesPanelPro
         form.reset({
           title: "",
           sectionType: "",
-          month: 1,
+          month: "1",
           status: DeliverableStatus.DRAFT,
           contentMarkdown: "",
-          target: undefined,
+          target: "",
         });
         setIsDialogOpen(false);
       } catch (error) {

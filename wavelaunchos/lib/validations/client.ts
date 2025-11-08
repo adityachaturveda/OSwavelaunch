@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { ClientStatusEnum } from "@/lib/constants/client";
+import { ClientStatus } from "@/lib/generated/prisma/enums";
 
 /**
  * Validation schema for creating a new client
@@ -19,7 +19,7 @@ export const createClientSchema = z.object({
     linkedin: z.string().url("Invalid LinkedIn URL").optional(),
     website: z.string().url("Invalid website URL").optional(),
   }).optional(),
-  status: z.nativeEnum(ClientStatusEnum).default(ClientStatusEnum.ACTIVE),
+  status: z.nativeEnum(ClientStatus).default(ClientStatus.ACTIVE),
 });
 
 /**
@@ -40,7 +40,7 @@ export const updateClientSchema = z.object({
     linkedin: z.string().url().optional(),
     website: z.string().url().optional(),
   }).optional(),
-  status: z.nativeEnum(ClientStatusEnum).optional(),
+  status: z.nativeEnum(ClientStatus).optional(),
 });
 
 /**
@@ -50,7 +50,7 @@ export const clientQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
   search: z.string().optional(),
-  status: z.nativeEnum(ClientStatusEnum).optional(),
+  status: z.nativeEnum(ClientStatus).optional(),
   sortBy: z.enum(["createdAt", "updatedAt", "creatorName", "brandName"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });

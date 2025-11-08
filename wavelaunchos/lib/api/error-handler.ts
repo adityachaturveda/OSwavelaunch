@@ -25,15 +25,25 @@ export function handleApiError(error: unknown): NextResponse {
 
   // Validation errors (Zod)
   if (error instanceof ZodError) {
+    const flattened = error.flatten();
+    const fieldErrorEntries = Object.entries(flattened.fieldErrors);
+    const details = fieldErrorEntries.reduce<Array<{ field: string; message: string }>>(
+      (accumulator, [field, messages]) => {
+        if (Array.isArray(messages)) {
+          messages.forEach((message) => {
+            accumulator.push({ field, message });
+          });
+        }
+        return accumulator;
+      },
+      []
+    );
     return NextResponse.json(
       {
         success: false,
         error: "Validation failed",
         code: "VALIDATION_ERROR",
-        details: error.errors.map((err) => ({
-          field: err.path.join("."),
-          message: err.message,
-        })),
+        details,
       },
       { status: 400 }
     );
