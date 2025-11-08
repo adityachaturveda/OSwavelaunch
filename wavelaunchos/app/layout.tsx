@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import authOptions from "@/lib/auth/options";
+// import authOptions from "@/lib/auth/options";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -20,7 +20,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
+  // TEMPORARY: Auth disabled - skip session fetching
+  const session = null;
+  // const session = await getServerSession(authOptions);
 
   return (
     <html lang="en" suppressHydrationWarning>
