@@ -3,11 +3,10 @@ import type { ReactNode } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-// import { requireAdmin } from "@/lib/auth/guards";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  // TEMPORARY: Auth disabled for testing
-  // await requireAdmin({ callbackUrl: "/dashboard" });
+  await requireAdmin({ callbackUrl: "/dashboard" });
 
   return (
     <SidebarProvider>

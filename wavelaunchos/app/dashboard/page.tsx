@@ -15,14 +15,8 @@ import {
   getDashboardMetrics,
   getRecentDeliverables,
   getVisitorMetrics,
-  type DashboardMetricRecord,
-  type VisitorMetricPoint,
-  type DeliverableSummary,
 } from "@/lib/data/dashboard";
 import { cn } from "@/lib/utils";
-
-// Force dynamic rendering (no static generation at build time)
-export const dynamic = 'force-dynamic';
 
 const deliverableFilters = ["All", "In Progress", "Done", "Review"] as const;
 
@@ -44,21 +38,11 @@ const statusClasses: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  // TEMPORARY: Provide fallback data when database is not available
-  let metrics: DashboardMetricRecord[] = [];
-  let visitorData: VisitorMetricPoint[] = [];
-  let deliverables: DeliverableSummary[] = [];
-  
-  try {
-    [metrics, visitorData, deliverables] = await Promise.all([
-      getDashboardMetrics(),
-      getVisitorMetrics(),
-      getRecentDeliverables(),
-    ]);
-  } catch (error) {
-    // Fallback empty data when DB not available (already initialized above)
-    console.error('Dashboard data fetch failed:', error);
-  }
+  const [metrics, visitorData, deliverables] = await Promise.all([
+    getDashboardMetrics(),
+    getVisitorMetrics(),
+    getRecentDeliverables(),
+  ]);
 
   return (
     <div className="flex-1 space-y-6 bg-background p-8 pt-6 text-foreground">
