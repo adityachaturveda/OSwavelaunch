@@ -1,0 +1,380 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/prisma"
+  binaryTargets = ["native", "linux-musl", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PlanStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  DELIVERED
+}
+
+enum DeliverableStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  DELIVERED
+  REVISION_REQUESTED
+}
+
+enum FileCategory {
+  BUSINESS_PLAN
+  DELIVERABLE
+  UPLOAD
+}
+
+enum PromptType {
+  BUSINESS_PLAN
+  DELIVERABLE_M1
+  DELIVERABLE_M2
+  DELIVERABLE_M3
+  DELIVERABLE_M4
+  DELIVERABLE_M5
+  DELIVERABLE_M6
+  DELIVERABLE_M7
+  DELIVERABLE_M8
+}
+
+enum JobType {
+  GENERATE_BUSINESS_PLAN
+  GENERATE_DELIVERABLE
+  GENERATE_PDF
+  SUMMARIZE_THREAD
+  BACKUP_DB
+  SYNC_INSTANTLY
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ActivityType {
+  CLIENT_CREATED
+  PLAN_GENERATED
+  DELIVERABLE_GENERATED
+  NOTE_ADDED
+  FILE_UPLOADED
+  CLIENT_UPDATED
+  JOB_COMPLETED
+  BACKUP_CREATED
+}
+
+enum BackupStatus {
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         UserRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  businessPlans        BusinessPlan[] @relation("BusinessPlanGeneratedBy")
+  deliverables         Deliverable[]  @relation("DeliverableGeneratedBy")
+  reviewedDeliverables Deliverable[]  @relation("DeliverableReviewedBy")
+  files                File[]         @relation("FileUploadedBy")
+  notes                Note[]
+  accounts             Account[]
+  sessions             Session[]
+}
+
+model Client {
+  id            String       @id @default(cuid())
+  creatorName   String
+  brandName     String
+  email         String       @unique
+  status        ClientStatus @default(ACTIVE)
+  niche         String?
+  goals         String?
+  socialHandles Json?
+  onboardedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  businessPlans BusinessPlan[]
+  deliverables  Deliverable[]
+  files         File[]
+  chatThreads   ChatThread[]
+  notes         Note[]
+  activities    Activity[]
+  kpis          ClientKPI[]
+}
+
+model BusinessPlan {
+  id              String     @id @default(cuid())
+  clientId        String
+  version         Int
+  status          PlanStatus @default(DRAFT)
+  contentHtml     String
+  contentMarkdown String
+  pdfPath         String?
+  generatedById   String?
+  approvedAt      DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  client      Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  generatedBy User?  @relation("BusinessPlanGeneratedBy", fields: [generatedById], references: [id])
+}
+
+model Deliverable {
+  id              String            @id @default(cuid())
+  clientId        String
+  month           Int
+  title           String
+  status          DeliverableStatus @default(DRAFT)
+  sectionType     String
+  contentHtml     String
+  contentMarkdown String
+  pdfPath         String?
+  rejectionReason String?
+  generatedById   String?
+  reviewerId      String?
+  target          Int?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  client      Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  generatedBy User?  @relation("DeliverableGeneratedBy", fields: [generatedById], references: [id])
+  reviewer    User?  @relation("DeliverableReviewedBy", fields: [reviewerId], references: [id])
+
+  @@unique([clientId, month, title])
+}
+
+model File {
+  id           String       @id @default(cuid())
+  clientId     String
+  filename     String
+  filepath     String
+  filesize     Int
+  mimetype     String
+  category     FileCategory
+  uploadedById String?
+  createdAt    DateTime     @default(now())
+  deletedAt    DateTime?
+
+  client     Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  uploadedBy User?  @relation("FileUploadedBy", fields: [uploadedById], references: [id])
+}
+
+model ChatThread {
+  id            String    @id @default(cuid())
+  clientId      String
+  externalId    String?
+  subject       String
+  summary       String?
+  sentiment     String?
+  lastMessageAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  client   Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  threadId  String
+  sender    String
+  recipient String
+  body      String
+  sentAt    DateTime
+
+  thread ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
+
+model PromptTemplate {
+  id        String     @id @default(cuid())
+  name      String
+  type      PromptType
+  yamlPath  String
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  type        JobType
+  status      JobStatus @default(QUEUED)
+  payload     Json
+  attempts    Int       @default(0)
+  result      Json?
+  error       String?
+  queuedAt    DateTime  @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Note {
+  id          String   @id @default(cuid())
+  clientId    String
+  authorId    String
+  content     String
+  isImportant Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id])
+}
+
+model Activity {
+  id          String       @id @default(cuid())
+  clientId    String
+  type        ActivityType
+  description String
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model ClientKPI {
+  id             String   @id @default(cuid())
+  clientId       String
+  date           DateTime
+  engagementRate Float?
+  salesRevenue   Float?
+  followerGrowth Float?
+  conversionRate Float?
+  createdAt      DateTime @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model DashboardMetric {
+  id          String   @id @default(cuid())
+  label       String   @unique
+  value       String
+  delta       String
+  isPositive  Boolean
+  subheading  String
+  description String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VisitorMetric {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  desktop   Int
+  mobile    Int
+  createdAt DateTime @default(now())
+}
+
+model BackupLog {
+  id        String       @id @default(cuid())
+  filename  String
+  filepath  String
+  filesize  Int
+  status    BackupStatus
+  verified  Boolean      @default(false)
+  createdAt DateTime     @default(now())
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Application {
+  id                    String   @id @default(cuid())
+  timestamp             DateTime @default(now())
+  fullName              String
+  email                 String
+  careerMilestones      String?
+  careerTurningPoints   String?
+  ventureVision         String?
+  ventureGoals          String?
+  industryFocus         String?
+  targetAudience        String?
+  audienceDemographics  String?
+  audiencePainPoints    String?
+  audienceAge           String?
+  differentiation       String?
+  uniqueValue           String?
+  competitors           String?
+  brandImage            String?
+  admiredInfluencers    String?
+  brandAesthetics       String?
+  brandEmotions         String?
+  brandPersonality      String?
+  brandFontPreference   String?
+  scalingGoals          String?
+  growthStrategies      String?
+  longTermVision        String?
+  additionalInfo        String?
+  keyDeadlines          String?
+  discoveryChannels     String?
+  audienceGender        String?
+  audienceMaritalStatus String?
+  brandValues           String?
+  submittedAt           DateTime @default(now())
+
+  @@index([email])
+}
