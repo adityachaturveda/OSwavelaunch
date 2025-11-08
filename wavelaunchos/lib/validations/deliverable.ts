@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { DeliverableStatus } from "@/lib/generated/prisma/enums";
+import { DeliverableStatus } from "@prisma/client";
 
 export const createDeliverableSchema = z.object({
   clientId: z.string().cuid("Invalid client ID"),

@@ -34,7 +34,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { createActivitySchema } from "@/lib/validations/activity";
-import { ActivityType } from "@/lib/generated/prisma/enums";
+import { ActivityType } from "@prisma/client";
 
 const activityFormSchema = createActivitySchema.omit({ clientId: true, metadata: true });
 

@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { PlanStatus } from "@/lib/generated/prisma/enums";
+import { PlanStatus } from "@prisma/client";
 import { createBusinessPlanSchema } from "@/lib/validations/business-plan";
 import { parseJsonSafe, extractErrorMessage } from "@/lib/api/fetch-utils";
 

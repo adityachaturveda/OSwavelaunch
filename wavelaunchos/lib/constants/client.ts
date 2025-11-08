@@ -1,4 +1,4 @@
-import { ClientStatus } from "@/lib/generated/prisma/enums";
+import { ClientStatus } from "@prisma/client";
 
 export const CLIENT_STATUS = [
   ClientStatus.ACTIVE,

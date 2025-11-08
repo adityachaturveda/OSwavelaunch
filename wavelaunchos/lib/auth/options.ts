@@ -4,7 +4,7 @@ import type { NextAuthOptions } from "next-auth";
 import type { Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import type { UserRole } from "@/lib/generated/prisma/enums";
+import type { UserRole } from "@prisma/client";
 
 import { prisma } from "@/lib/db/client";
 

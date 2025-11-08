@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { PlanStatus } from "@/lib/generated/prisma/enums";
+import { PlanStatus } from "@prisma/client";
 
 export const createBusinessPlanSchema = z.object({
   clientId: z.string().cuid("Invalid client ID"),

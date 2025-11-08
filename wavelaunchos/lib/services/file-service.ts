@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import { ApiError } from "@/lib/api/error-handler";
-import { FileCategory } from "@/lib/generated/prisma/enums";
+import { FileCategory } from "@prisma/client";
 
 export async function listClientFiles(clientId: string) {
   return prisma.file.findMany({

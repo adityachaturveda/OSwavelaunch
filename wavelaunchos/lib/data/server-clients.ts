@@ -1,4 +1,4 @@
-import { ClientStatus } from "../generated/prisma/client";
+import { ClientStatus } from "@prisma/client";
 import { prisma } from "../db/client";
 import type { ClientStatusValue } from "../constants/client";
 

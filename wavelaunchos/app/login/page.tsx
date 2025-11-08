@@ -6,7 +6,7 @@ import { GalleryVerticalEnd } from "lucide-react";
 
 import { LoginForm } from "./login-form";
 import authOptions from "@/lib/auth/options";
-import { UserRole } from "@/lib/generated/prisma/enums";
+import { UserRole } from "@prisma/client";
 
 export default async function LoginPage() {
   const session = await getServerSession(authOptions);

@@ -1,4 +1,4 @@
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../db/client";
 import { ApiError } from "../api/error-handler";
 import type { CreateActivityInput, ActivityQuery } from "../validations/activity";

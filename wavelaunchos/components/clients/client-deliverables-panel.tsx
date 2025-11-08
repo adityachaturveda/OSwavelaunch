@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { DeliverableStatus } from "@/lib/generated/prisma/enums";
+import { DeliverableStatus } from "@prisma/client";
 
 type DeliverableRecord = {
   id: string;

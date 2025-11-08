@@ -2,7 +2,7 @@ import { DefaultSession } from "next-auth";
 import { DefaultJWT } from "next-auth/jwt";
 import type { AdapterUser as DefaultAdapterUser } from "next-auth/adapters";
 
-import type { UserRole } from "@/lib/generated/prisma/enums";
+import type { UserRole } from "@prisma/client";
 
 declare module "next-auth" {
   interface Session {

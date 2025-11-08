@@ -4,7 +4,7 @@ import path from "path";
 
 import { requireAdmin } from "@/lib/auth/api-middleware";
 import { handleApiError, successResponse, createdResponse } from "@/lib/api/error-handler";
-import { FileCategory } from "@/lib/generated/prisma/client";
+import { FileCategory } from "@prisma/client";
 import { createClientFile, listClientFiles } from "@/lib/services/file-service";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

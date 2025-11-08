@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ActivityType } from "../generated/prisma/enums";
+import { ActivityType } from "@prisma/client";
 
 /**
  * Validation schema for creating an activity log

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { requireAdmin } from "@/lib/auth/api-middleware";
 import { handleApiError, successResponse, createdResponse } from "@/lib/api/error-handler";
-import { DeliverableStatus } from "@/lib/generated/prisma/enums";
+import { DeliverableStatus } from "@prisma/client";
 import { createDeliverable, listDeliverables } from "@/lib/services/deliverable-service";
 import { createDeliverableSchema } from "@/lib/validations/deliverable";
 

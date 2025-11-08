@@ -1,4 +1,4 @@
-import { Prisma, ClientStatus, ActivityType } from "../generated/prisma/client";
+import { Prisma, ClientStatus, ActivityType } from "@prisma/client";
 import { prisma } from "../db/client";
 import { ApiError } from "../api/error-handler";
 import type { CreateClientInput, UpdateClientInput, ClientQuery } from "../validations/client";

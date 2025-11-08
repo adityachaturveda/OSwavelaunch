@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { ClientStatus } from "@/lib/generated/prisma/enums";
+import { ClientStatus } from "@prisma/client";
 
 /**
  * Validation schema for creating a new client

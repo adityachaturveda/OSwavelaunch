@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import { ApiError } from "@/lib/api/error-handler";
-import { DeliverableStatus } from "@/lib/generated/prisma/client";
+import { DeliverableStatus } from "@prisma/client";
 
 import type {
   CreateDeliverableInput,
