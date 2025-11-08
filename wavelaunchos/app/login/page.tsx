@@ -1,27 +1,30 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 
 import { GalleryVerticalEnd } from "lucide-react";
 
 import { LoginForm } from "./login-form";
-import authOptions from "@/lib/auth/options";
-import { UserRole } from "@prisma/client";
+// import authOptions from "@/lib/auth/options";
+// import { UserRole } from "@prisma/client";
 
 export default async function LoginPage() {
-  const session = await getServerSession(authOptions);
+  // TEMPORARY: Auth disabled - redirect to dashboard
+  redirect("/dashboard");
 
-  if (session?.user) {
-    if (session.user.role === UserRole.ADMIN) {
-      redirect("/dashboard");
-    }
-
-    if (session.user.role === UserRole.CLIENT) {
-      redirect("/portal");
-    }
-
-    redirect("/");
-  }
+  // const session = await getServerSession(authOptions);
+  // 
+  // if (session?.user) {
+  //   if (session.user.role === UserRole.ADMIN) {
+  //     redirect("/dashboard");
+  //   }
+  // 
+  //   if (session.user.role === UserRole.CLIENT) {
+  //     redirect("/portal");
+  //   }
+  // 
+  //   redirect("/");
+  // }
 
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
