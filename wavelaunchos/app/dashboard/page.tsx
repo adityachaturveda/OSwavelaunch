@@ -18,6 +18,9 @@ import {
 } from "@/lib/data/dashboard";
 import { cn } from "@/lib/utils";
 
+// Force dynamic rendering (no static generation at build time)
+export const dynamic = 'force-dynamic';
+
 const deliverableFilters = ["All", "In Progress", "Done", "Review"] as const;
 
 const statusClasses: Record<string, string> = {
@@ -38,11 +41,21 @@ const statusClasses: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const [metrics, visitorData, deliverables] = await Promise.all([
-    getDashboardMetrics(),
-    getVisitorMetrics(),
-    getRecentDeliverables(),
-  ]);
+  // TEMPORARY: Provide fallback data when database is not available
+  let metrics, visitorData, deliverables;
+  
+  try {
+    [metrics, visitorData, deliverables] = await Promise.all([
+      getDashboardMetrics(),
+      getVisitorMetrics(),
+      getRecentDeliverables(),
+    ]);
+  } catch (error) {
+    // Fallback empty data when DB not available
+    metrics = [];
+    visitorData = [];
+    deliverables = [];
+  }
 
   return (
     <div className="flex-1 space-y-6 bg-background p-8 pt-6 text-foreground">
